@@ -37,7 +37,6 @@ export default function Sidebar({
 
   return (
     <>
-
       <ProfileModal
         isOpen={isProfileOpen}
         onClose={() => setIsProfileOpen(false)}

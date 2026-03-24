@@ -9,13 +9,14 @@ import TeamReimbursementForm from "../reimbursements/TeamReimbursementForm"
 import Button from "../ui/Button"
 import { Pagination } from "../Pagination"
 import { Users, UserPlus } from "lucide-react"
+import Toast, { ToastType } from "../ui/Toast"
 
 type ManagerPageProps = {
     managerId: string;
     name: string
 };
 
-export default function ManagerPage({ managerId, name }:Readonly <ManagerPageProps>) {
+export default function ManagerPage({ managerId, name }: Readonly<ManagerPageProps>) {
     const [employees, setEmployees] = useState<Employee[]>([])
     const [loading, setLoading] = useState(true)
     const [department, setDepartment] = useState("")
@@ -24,6 +25,12 @@ export default function ManagerPage({ managerId, name }:Readonly <ManagerPagePro
     const [currentPage, setCurrentPage] = useState(0)
     const [totalPages, setTotalPages] = useState(1)
     const [showForm, setShowForm] = useState(false)
+
+    const [toast, setToast] = useState<{ message: string; type: ToastType } | null>(null)
+
+    const showToast = (message: string, type: ToastType) => {
+        setToast({ message, type })
+    }
 
     const pageSize = 10
 
@@ -51,6 +58,7 @@ export default function ManagerPage({ managerId, name }:Readonly <ManagerPagePro
             setTotalPages(Array.isArray(data) ? 1 : data?.totalPages || 1)
         } catch (error) {
             console.error("Fetch failed", error)
+            showToast("Failed to load employees.", "error")
         } finally {
             setLoading(false)
         }
@@ -109,8 +117,15 @@ export default function ManagerPage({ managerId, name }:Readonly <ManagerPagePro
 
     return (
         <div className="flex flex-col min-h-screen bg-[#F9FAFB]">
-            {/* Top Header / Navigation */}
-            <div className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-20">
+            {toast && (
+                <Toast
+                    message={toast.message}
+                    type={toast.type}
+                    onClose={() => setToast(null)}
+                />
+            )}
+
+            <div className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-20 p-1">
                 <Header
                     title="Team Management"
                     onDepartmentChange={setDepartment}
@@ -130,7 +145,6 @@ export default function ManagerPage({ managerId, name }:Readonly <ManagerPagePro
 
             <main className="flex-grow py-8 px-4 sm:px-6 lg:px-8 pb-32">
                 <div className="max-w-6xl mx-auto">
-                    {/* Hero Section */}
                     <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
                         <div>
                             <h2 className="text-3xl font-extrabold text-gray-900 tracking-tight flex items-center gap-2">
@@ -151,7 +165,6 @@ export default function ManagerPage({ managerId, name }:Readonly <ManagerPagePro
                         </Button>
                     </div>
 
-                    {/* Table Container */}
                     <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden transition-all duration-300 hover:shadow-md">
                         <Table
                             data={employees}
@@ -163,7 +176,6 @@ export default function ManagerPage({ managerId, name }:Readonly <ManagerPagePro
                 </div>
             </main>
 
-            {/* Sticky Pagination Footer */}
             <footer className="fixed bottom-0 left-0 right-0 bg-white/80 backdrop-blur-md py-4 shadow-[0_-4px_20px_-5px_rgba(0,0,0,0.05)] z-10">
                 <div className="flex justify-center items-center">
                     <Pagination
@@ -175,7 +187,6 @@ export default function ManagerPage({ managerId, name }:Readonly <ManagerPagePro
                 </div>
             </footer>
 
-            {/* Modal Form */}
             {showForm && (
                 <TeamReimbursementForm
                     selectedEmployees={selectedEmployees}
@@ -192,10 +203,10 @@ export default function ManagerPage({ managerId, name }:Readonly <ManagerPagePro
                             });
                             setSelectedEmployeeIds([]);
                             setShowForm(false);
-                            alert("Team reimbursement submitted successfully!");
+                            showToast("Team reimbursement submitted successfully!", "success");
                         } catch (error) {
                             console.error("Submission error:", error);
-                            alert("Failed to submit team reimbursement request.");
+                            showToast("Failed to submit team reimbursement request.", "error");
                         } finally {
                             setLoading(false);
                         }

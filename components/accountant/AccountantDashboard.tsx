@@ -69,12 +69,12 @@ export default function AccountantDashboard() {
   }
 
   const pieData = Object.entries(data.spendByType || {}).map(([name, value]) => ({ 
-    name: name.replace(/_/g, ' '), 
+    name: name.replaceAll("_", ' '), 
     value 
   }));
   
   const barData = Object.entries(data.statusDistribution || {}).map(([name, value]) => ({ 
-    name: name.replace(/_/g, ' '), 
+    name: name.replaceAll("_", ' '), 
     value 
   }));
 

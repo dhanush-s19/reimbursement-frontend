@@ -68,7 +68,6 @@ export default function ActiveCertificationTable() {
         <div className="flex flex-wrap gap-1.5 max-w-xs py-1">
           {cert.recommendedRoles.map((role) => (
             <span
-              // Using a combination of cert ID and role name to ensure uniqueness
               key={`${cert.id}-${role}`}
               className="text-sm text-gray-500 bg-gray-50 px-2 py-0.5 rounded border border-gray-100"
             >

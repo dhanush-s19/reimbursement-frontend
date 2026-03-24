@@ -30,7 +30,7 @@ export default function TeamReimbursementForm({
 }: Readonly<Props>) {
     const [formData, setFormData] = useState({ title: "", amount: "", description: "" });
 
-    const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
+    const handleSubmit = (e: React.SubmitEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         if (!formData.title || !formData.amount) {
@@ -38,11 +38,9 @@ export default function TeamReimbursementForm({
             return;
         }
 
-
-
         const payload = {
             title: formData.title,
-            amount: parseFloat(formData.amount),
+            amount: Number.parseFloat(formData.amount),
             description: formData.description,
             submittedById: submittedBy,
             name: managerName,
@@ -51,7 +49,7 @@ export default function TeamReimbursementForm({
         };
 
         try {
-            await onSubmit(payload);
+            onSubmit(payload);
         } catch (err: any) {
             alert(err.message || "Failed to submit reimbursement");
         }
@@ -83,7 +81,7 @@ export default function TeamReimbursementForm({
 
                 <div className="space-y-4">
                     <div>
-                        <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-1 ml-1">Title</label>
+                        <label htmlFor="text" className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-1 ml-1">Title</label>
                         <input
                             type="text"
                             placeholder="e.g. Team Lunch"
@@ -95,7 +93,7 @@ export default function TeamReimbursementForm({
                     </div>
 
                     <div>
-                        <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-1 ml-1">Total Amount</label>
+                        <label htmlFor="number" className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-1 ml-1">Total Amount</label>
                         <div className="relative">
                             <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 font-medium">$</span>
                             <input
@@ -111,7 +109,7 @@ export default function TeamReimbursementForm({
                     </div>
 
                     <div>
-                        <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-1 ml-1">Notes</label>
+                        <label htmlFor="text" className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-1 ml-1">Notes</label>
                         <textarea
                             placeholder="Provide any additional context..."
                             rows={3}
@@ -137,8 +135,8 @@ export default function TeamReimbursementForm({
                         disabled={loading}
                         className={`flex-1 px-4 py-3 text-sm font-semibold text-white rounded-xl transition-all shadow-md 
                             ${loading
-                                ? 'cursor-not-allowed'
-                                : 'from-indigo-600 to-violet-600 hover:shadow-lg hover:-translate-y-0.5'
+                                ? 'cursor-not-allowed bg-gray-400'
+                                : 'bg-indigo-600 hover:bg-indigo-700 hover:shadow-lg hover:-translate-y-0.5'
                             }`}
                     >
                         {loading ? 'Submitting...' : 'Submit Request'}

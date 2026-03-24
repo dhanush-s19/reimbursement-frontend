@@ -26,9 +26,6 @@ type Page<T> = {
   number: number;
 };
 
-/**
- * Helper component for sort indicators
- */
 const SortIcon = ({ field, sortBy, direction }: { field: string; sortBy: string; direction: string }) => {
   if (sortBy !== field) return null;
   return direction === "asc" ? (
@@ -74,7 +71,7 @@ export default function HRReimbursementList({ hrId }:Readonly <Props>) {
       setSortBy(field);
       setDirection("desc");
     }
-    setPage(0); // Reset to first page on sort
+    setPage(0); 
   };
 
   const handleRowClick = (r: ReimbursementResponse) => {

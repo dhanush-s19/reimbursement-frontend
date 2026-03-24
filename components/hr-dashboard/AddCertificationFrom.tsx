@@ -17,7 +17,7 @@ interface AddCertificationFormProps {
   onAdded?: () => void; 
 }
 
-export default function AddCertificationForm({ onAdded }: AddCertificationFormProps) {
+export default function AddCertificationForm({ onAdded }: Readonly<AddCertificationFormProps>) {
   const [form, setForm] = useState<Certification>({
     category: "Cloud",
     certification: "",
@@ -60,7 +60,6 @@ export default function AddCertificationForm({ onAdded }: AddCertificationFormPr
         status: "Active",
       });
 
-      // Notify parent to close modal & refresh table
       onAdded?.();
     } catch (err) {
       setMessage("Failed to add certification");
@@ -78,7 +77,7 @@ export default function AddCertificationForm({ onAdded }: AddCertificationFormPr
 
       {/* Category */}
       <div>
-        <label className="block text-sm font-medium">Category</label>
+        <label htmlFor="select" className="block text-sm font-medium">Category</label>
         <select
           value={form.category}
           onChange={(e) => handleChange("category", e.target.value)}
@@ -93,7 +92,7 @@ export default function AddCertificationForm({ onAdded }: AddCertificationFormPr
 
       {/* Certification Name */}
       <div>
-        <label className="block text-sm font-medium">Certification Name</label>
+        <label htmlFor="text" className="block text-sm font-medium">Certification Name</label>
         <input
           type="text"
           value={form.certification}
@@ -106,7 +105,7 @@ export default function AddCertificationForm({ onAdded }: AddCertificationFormPr
 
       {/* Recommended Roles */}
       <div>
-        <label className="block text-sm font-medium mb-2">Recommended Roles</label>
+        <label htmlFor="input" className="block text-sm font-medium mb-2">Recommended Roles</label>
         <div className="grid grid-cols-2 gap-2">
           {roles.map((role) => (
             <label key={role} className="flex items-center gap-2">
@@ -123,7 +122,7 @@ export default function AddCertificationForm({ onAdded }: AddCertificationFormPr
 
       {/* Status */}
       <div>
-        <label className="block text-sm font-medium">Status</label>
+        <label htmlFor="select" className="block text-sm font-medium">Status</label>
         <select
           value={form.status}
           onChange={(e) => handleChange("status", e.target.value)}

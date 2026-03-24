@@ -33,7 +33,6 @@ export const menus = {
       href: "/reimbursement-form",
     },
     { name: "Reimbursement Status", href: "/reimbursement" },
-    { name: "Team Event Status", href: "/manager/team-event-request" },
     { name: "Certification", href: "/certification" },
   ],
 };

@@ -23,11 +23,11 @@ export default function Header({
   onSearchChange,
   actions,
   hideSearchForRoles = ["Accountant", "Employee"],
-}: HeaderProps) {
+}: Readonly<HeaderProps>) {
   const showSearch = onSearchChange && !(role && hideSearchForRoles.includes(role));
 
   return (
-    <header className="sticky top-0 z-30 w-full bg-white/80 backdrop-blur-md border-b border-gray-200 px-4 py-4 sm:px-6 lg:px-8">
+    <header className="sticky top-0 z-30 w-full bg-white/80 backdrop-blur-md px-3 py-5 sm:px-6 lg:px-8">
 
       <div className="w-full flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div className="flex-shrink-0">

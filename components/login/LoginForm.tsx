@@ -88,7 +88,7 @@ const LoginPage = () => {
 
             <form onSubmit={handleSubmit} className="space-y-5">
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">Email Address</label>
+                <label htmlFor="email" className="block text-sm font-medium text-slate-700 mb-1">Email Address</label>
                 <input
                   type="email"
                   placeholder="name@company.com"
@@ -100,23 +100,15 @@ const LoginPage = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">Password</label>
+                <label htmlFor="password" className="block text-sm font-medium text-slate-700 mb-1">Password</label>
                 <input
                   type="password"
-                  placeholder="••••••••"
+                  placeholder="•••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
                   className="w-full p-3.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all bg-slate-50 focus:bg-white"
                 />
-              </div>
-
-              <div className="flex items-center justify-between text-sm">
-                <label className="flex items-center text-slate-600">
-                  <input type="checkbox" className="mr-2 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500" />
-                  Remember me
-                </label>
-                <a href="#" className="text-indigo-600 hover:underline font-medium">Forgot password?</a>
               </div>
 
               <Button

@@ -8,6 +8,8 @@ import { apiFetch } from "@/lib/api"
 import EmployeeActions from "./EmployeeActions"
 import Table from "../ui/Table"
 import { Pagination } from "../Pagination"
+import { Pencil, Trash2 } from "lucide-react"
+import Toast, { ToastType } from "../ui/Toast"
 
 
 export default function EmployeePage() {
@@ -19,6 +21,13 @@ export default function EmployeePage() {
   const [search, setSearch] = useState("")
   const [currentPage, setCurrentPage] = useState(0)
   const [totalPages, setTotalPages] = useState(0)
+
+  // --- Toast State ---
+  const [toast, setToast] = useState<{ message: string; type: ToastType } | null>(null)
+
+  const showToast = (message: string, type: ToastType) => {
+    setToast({ message, type })
+  }
 
   const pageSize = 10
 
@@ -38,13 +47,11 @@ export default function EmployeePage() {
         : `/api/users?${params}`
 
       const data = await apiFetch(endpoint)
-
       const list = Array.isArray(data) ? data : data?.content || []
       setEmployees(list)
       setTotalPages(Array.isArray(data) ? 1 : data?.totalPages || 1)
-
     } catch (error) {
-      console.error("Fetch failed", error)
+      showToast("Failed to fetch employees", "error")
     } finally {
       setLoading(false)
     }
@@ -54,6 +61,39 @@ export default function EmployeePage() {
     fetchEmployees()
   }, [fetchEmployees])
 
+  const deleteEmployee = async (id: string) => {
+    try {
+      await apiFetch(`/api/users/${id}`, { method: "DELETE" })
+      await fetchEmployees()
+      showToast("Employee deleted successfully", "success")
+    } catch (error) {
+      showToast("Failed to delete employee", "error")
+    }
+  }
+
+  const handleSave = async (employee: Employee) => {
+    try {
+      const method = selectedEmployee ? "PUT" : "POST"
+      const url = selectedEmployee ? `/api/users/${employee.id}` : "/api/users"
+
+      await apiFetch(url, {
+        method,
+        body: JSON.stringify(employee),
+      })
+
+      await fetchEmployees()
+      setIsModalOpen(false)
+      setSelectedEmployee(null)
+      showToast(
+        `Employee ${selectedEmployee ? "updated" : "created"} successfully`, 
+        "success"
+      )
+    } catch (error) {
+      showToast("Error saving employee data", "error")
+    }
+  }
+
+  // ... (Keep columns and other handlers as they were)
   const handleDepartmentChange = (value: string) => {
     setDepartment(value)
     setCurrentPage(0)
@@ -64,66 +104,22 @@ export default function EmployeePage() {
     setCurrentPage(0)
   }
 
-  const deleteEmployee = async (id: string) => {
-    if (!confirm("Are you sure?")) return
-    try {
-      await apiFetch(`/api/users/${id}`, { method: "DELETE" })
-      
-      await fetchEmployees()
-
-    } catch (error) {
-      console.error(error)
-    }
-  }
-
-  const handleSave = async (employee: Employee) => {
-    try {
-      const method = selectedEmployee ? "PUT" : "POST"
-      const url = selectedEmployee
-        ? `/api/users/${employee.id}`
-        : "/api/users"
-
-      await apiFetch(url, {
-        method,
-        body: JSON.stringify(employee),
-      })
-
-      await fetchEmployees()
-      setIsModalOpen(false)
-      setSelectedEmployee(null)
-
-    } catch (error) {
-      console.error(error)
-    }
-  }
-
   const columns = [
     {
       header: "ID",
       className: "hidden md:table-cell",
       render: (e: Employee) => (
-        <span className="font-mono text-xs text-gray-500">
-          {e.employeeId}
-        </span>
+        <span className="font-mono text-xs text-gray-500">{e.employeeId}</span>
       ),
     },
     {
       header: "Employee",
       render: (e: Employee) => (
         <div className="flex flex-col">
-          <span className="font-semibold text-gray-900">
-            {e.name}
-          </span>
-          <span className="text-xs text-gray-500 md:hidden">
-            {e.email}
-          </span>
+          <span className="font-semibold text-gray-900">{e.name}</span>
+          <span className="text-xs text-gray-500 md:hidden">{e.email}</span>
         </div>
       ),
-    },
-    {
-      header: "Email",
-      className: "hidden md:table-cell",
-      render: (e: Employee) => e.email,
     },
     {
       header: "Dept",
@@ -143,18 +139,20 @@ export default function EmployeePage() {
               setSelectedEmployee(e)
               setIsModalOpen(true)
             }}
-            className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-            aria-label="Edit"
+            className="p-2 text-black-600 hover:bg-blue-50 rounded-lg transition-colors"
           >
-            Edit
+            <Pencil size={18} />
           </button>
 
           <button
-            onClick={() => deleteEmployee(e.id)}
+            onClick={() => {
+              if (confirm('Are you sure you want to delete this employee?')) {
+                deleteEmployee(e.id);
+              }
+            }}
             className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-            aria-label="Delete"
           >
-            Delete
+            <Trash2 size={18} />
           </button>
         </div>
       ),
@@ -163,52 +161,64 @@ export default function EmployeePage() {
 
   return (
     <div className="flex flex-col min-h-screen w-full bg-gray-50 overflow-x-hidden">
-      
-      <Header
-        title="Employees"
-        role="ADMIN"
-        onDepartmentChange={handleDepartmentChange}
-        search={search}
-        onSearchChange={handleSearchChange}
-        options={[
-          { label: "All Departments", value: "" },
-          { label: "HR", value: "HR" },
-          { label: "Development", value: "DEVELOPMENT" },
-          { label: "QA", value: "QA" },
-          { label: "Business Analyst", value: "BA" },
-          { label: "Finance", value: "FINANCE" },
-          { label: "Marketing", value: "DIGITAL_MARKETING" },
-          { label: "UI/UX", value: "UI_UX" },
-        ]}
-        actions={
-          <EmployeeActions
-            onAdd={() => {
-              setSelectedEmployee(null)
-              setIsModalOpen(true)
-            }}
-          />
-        }
-      />
+      {/* Toast Notification */}
+      {toast && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast(null)}
+        />
+      )}
 
-      <main className="flex-1 p-3 sm:p-6 lg:p-8">
-        <div className="max-w-7xl mx-auto bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-          <div className="overflow-x-auto">
-            <Table
-              data={employees}
-              columns={columns}
-              loading={loading}
-              emptyMessage="No employees matching your criteria"
+      <div className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-20 py-1">
+        <Header
+          title="Employees"
+          role="ADMIN"
+          onDepartmentChange={handleDepartmentChange}
+          search={search}
+          onSearchChange={handleSearchChange}
+          options={[
+            { label: "All Departments", value: "" },
+            { label: "HR", value: "HR" },
+            { label: "Development", value: "DEVELOPMENT" },
+            { label: "QA", value: "QA" },
+            { label: "Business Analyst", value: "BA" },
+            { label: "Finance", value: "FINANCE" },
+            { label: "Marketing", value: "DIGITAL_MARKETING" },
+            { label: "UI/UX", value: "UI_UX" },
+          ]}
+          actions={
+            <EmployeeActions
+              onAdd={() => {
+                setSelectedEmployee(null)
+                setIsModalOpen(true)
+              }}
             />
-          </div>
+          }
+        />
+      </div>
+
+      <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 pb-24">
+        <div className="max-w-7xl mx-auto bg-white rounded-xl shadow-sm border border-gray-200">
+          <Table
+            data={employees}
+            columns={columns}
+            loading={loading}
+            emptyMessage="No employees matching your search criteria."
+          />
         </div>
       </main>
 
-      <Pagination
-        currentPage={currentPage}
-        totalPages={totalPages}
-        loading={loading}
-        onPageChange={(page) => setCurrentPage(page)}
-      />
+      <footer className="bg-white/90 backdrop-blur-sm border-t border-gray-200 py-3 px-6 z-30">
+        <div className="max-w-7xl mx-auto flex justify-center">
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={setCurrentPage}
+            loading={loading}
+          />
+        </div>
+      </footer>
 
       <EmployeeModal
         open={isModalOpen}

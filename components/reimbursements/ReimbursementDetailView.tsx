@@ -1,5 +1,5 @@
 import React from "react";
-import { Maximize2, FileText, IndianRupee, Clock, Tag, ChevronRight } from "lucide-react";
+import { Maximize2, FileText, IndianRupee, Clock, Tag, ChevronRight, Users } from "lucide-react";
 import Card from "../ui/Card";
 import { ReimbursementActionCard } from "./ReimbursementActionCard";
 
@@ -23,6 +23,10 @@ export default function ReimbursementDetailView(props: Readonly<Props>) {
   const invoiceUrl = reimbursement.fileUrls?.[0] || null;
   const isPdf = invoiceUrl?.toLowerCase().endsWith(".pdf");
   const hasInvoice = !!invoiceUrl;
+
+  // Logic for Team Member count
+  const isTeamEvent = reimbursement.type === "TEAM_EVENTS";
+  const teamCount = reimbursement.teamMemberIds?.length || 0;
 
   const openFullScreen = () => {
     if (invoiceUrl) window.open(invoiceUrl, "_blank", "noopener,noreferrer");
@@ -101,12 +105,24 @@ export default function ReimbursementDetailView(props: Readonly<Props>) {
               <div className="grid grid-cols-2 gap-6">
                 <div>
                   <p className="text-sm text-slate-500 flex items-center gap-1.5"><IndianRupee size={14} /> Requested</p>
-                  <p className="text-2xl font-mono font-bold">₹{reimbursement.amount?.toLocaleString()}</p>
+                  <p className="text-2xl font-mono font-bold text-slate-900">₹{reimbursement.amount?.toLocaleString()}</p>
                 </div>
                 <div className="border-l border-slate-100 pl-6">
                   <p className="text-sm text-slate-500 flex items-center gap-1.5"><Tag size={14} /> Category</p>
-                  <p className="text-sm font-bold uppercase">{reimbursement.type?.replaceAll("_", " ")}</p>
+                  <p className="text-sm font-bold uppercase text-slate-700">{reimbursement.type?.replaceAll("_", " ")}</p>
                 </div>
+
+                {/* Team Members Count Section */}
+                {isTeamEvent && (
+                  <div className="col-span-2 pt-4 border-t border-slate-100">
+                    <p className="text-sm text-slate-500 flex items-center gap-1.5">
+                      <Users size={14} /> Team Size
+                    </p>
+                    <p className="text-sm font-bold text-slate-700">
+                      {teamCount} {teamCount === 1 ? 'Member' : 'Members'}
+                    </p>
+                  </div>
+                )}
               </div>
             </Card.Content>
           </Card>

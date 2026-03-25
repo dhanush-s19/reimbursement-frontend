@@ -1,12 +1,12 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { 
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, 
-  PieChart, Pie, Cell, Legend 
+import {
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
+  PieChart, Pie, Cell, Legend
 } from "recharts";
 import { Wallet, Clock, CheckCircle2, FileText, AlertCircle, Loader2 } from "lucide-react";
-import Card from "../ui/Card"; 
+import Card from "../ui/Card";
 import { apiFetch } from "@/lib/api";
 
 interface DashboardStats {
@@ -14,6 +14,7 @@ interface DashboardStats {
   pendingApprovalCount: number;
   spendByType: Record<string, number>;
   statusDistribution: Record<string, number>;
+  approvalRate: number
 }
 
 const COLORS = ["#111827", "#374151", "#6B7280", "#9CA3AF", "#E5E7EB"];
@@ -40,7 +41,7 @@ export default function AccountantDashboard() {
     getDashboardData();
   }, []);
 
- 
+
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-4">
@@ -57,7 +58,7 @@ export default function AccountantDashboard() {
           <AlertCircle className="w-10 h-10 text-gray-300 mx-auto mb-4" />
           <h3 className="text-lg font-bold text-gray-900">Data Unavailable</h3>
           <p className="text-gray-500 text-sm mt-2">{error || "No data received."}</p>
-          <button 
+          <button
             onClick={() => window.location.reload()}
             className="mt-6 px-4 py-2 bg-gray-900 text-white rounded-lg text-sm hover:bg-gray-800 transition-colors"
           >
@@ -68,14 +69,14 @@ export default function AccountantDashboard() {
     );
   }
 
-  const pieData = Object.entries(data.spendByType || {}).map(([name, value]) => ({ 
-    name: name.replaceAll("_", ' '), 
-    value 
+  const pieData = Object.entries(data.spendByType || {}).map(([name, value]) => ({
+    name: name.replaceAll("_", ' '),
+    value
   }));
-  
-  const barData = Object.entries(data.statusDistribution || {}).map(([name, value]) => ({ 
-    name: name.replaceAll("_", ' '), 
-    value 
+
+  const barData = Object.entries(data.statusDistribution || {}).map(([name, value]) => ({
+    name: name.replaceAll("_", ' '),
+    value
   }));
 
   return (
@@ -97,7 +98,7 @@ export default function AccountantDashboard() {
             <div>
               <Card.Description>Total Pending Payout</Card.Description>
               <p className="text-2xl font-bold text-gray-900">
-                ${(data.totalPendingPayout || 0).toLocaleString()}
+                ₹{(data.totalPendingPayout || 0).toLocaleString()}
               </p>
             </div>
           </Card.Content>
@@ -124,7 +125,9 @@ export default function AccountantDashboard() {
             </div>
             <div>
               <Card.Description>Approval Rate</Card.Description>
-              <p className="text-2xl font-bold text-gray-900">94.8%</p>
+              <p className="text-2xl font-bold text-gray-900">
+                {(data.approvalRate || 0).toFixed(1)}%
+              </p>
             </div>
           </Card.Content>
         </Card>
@@ -144,7 +147,7 @@ export default function AccountantDashboard() {
 
       {/* --- GRAPHS --- */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        
+
         {/* Spend by Type - Pie Chart */}
         <Card>
           <Card.Header>
@@ -166,10 +169,10 @@ export default function AccountantDashboard() {
                       <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                     ))}
                   </Pie>
-                  <Tooltip 
-                     contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
+                  <Tooltip
+                    contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
                   />
-                  <Legend iconType="circle" verticalAlign="bottom" height={36}/>
+                  <Legend iconType="circle" verticalAlign="bottom" height={36} />
                 </PieChart>
               </ResponsiveContainer>
             ) : (
@@ -189,23 +192,23 @@ export default function AccountantDashboard() {
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={barData}>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#F3F4F6" />
-                  <XAxis 
-                    dataKey="name" 
-                    fontSize={10} 
-                    tickLine={false} 
-                    axisLine={false} 
-                    tick={{fill: '#6B7280'}}
-                    interval={0}
+                  <XAxis
+                    dataKey="name"
+                    interval="preserveStartEnd" 
+                    fontSize={10}
+                    tickLine={false}
+                    axisLine={false}
+                    tick={{ fill: '#6B7280' }}
                   />
                   <YAxis hide />
-                  <Tooltip 
-                    cursor={{fill: '#F9FAFB'}} 
-                    contentStyle={{borderRadius: '12px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)'}}
+                  <Tooltip
+                    cursor={{ fill: '#F9FAFB' }}
+                    contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
                   />
-                  <Bar 
-                    dataKey="value" 
-                    fill="#111827" 
-                    radius={[4, 4, 0, 0]} 
+                  <Bar
+                    dataKey="value"
+                    fill="#111827"
+                    radius={[4, 4, 0, 0]}
                     barSize={32}
                   />
                 </BarChart>

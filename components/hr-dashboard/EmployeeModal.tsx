@@ -187,7 +187,7 @@ export default function EmployeeFormModal({ open, onClose, employee, onSave }: R
           <Button
             variant="secondary"
             onClick={handleSubmit}
-            className="w-full sm:w-auto px-6 py-2.5 text-white bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400"
+            className="w-full sm:w-auto px-6 py-2.5 text-white hover:bg-gray-700 disabled"
             disabled={loading}
           >
             {loading ? "Saving..." : employee ? "Update Employee" : "Save Employee"}

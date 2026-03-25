@@ -29,14 +29,14 @@ export default function EmployeeFormModal({ open, onClose, employee, onSave }: R
   useEffect(() => {
     if (!open) return
     setForm(employee ? { ...employee, password: "" } : defaultForm)
-    setErrors({}) 
+    setErrors({})
   }, [open, employee])
 
   const validate = (): boolean => {
     const newErrors: Record<string, string> = {}
 
     if (!form.employeeId.trim()) newErrors.employeeId = "Employee ID is required"
-    
+
     if (!form.name.trim()) {
       newErrors.name = "Name is required"
     } else if (form.name.length < 2 || form.name.length > 100) {
@@ -70,7 +70,6 @@ export default function EmployeeFormModal({ open, onClose, employee, onSave }: R
     (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
       const { name, value } = e.target
       setForm(prev => ({ ...prev, [name]: value }))
-      // Clear error when user starts typing
       if (errors[name]) {
         setErrors(prev => ({ ...prev, [name]: "" }))
       }
@@ -87,7 +86,7 @@ export default function EmployeeFormModal({ open, onClose, employee, onSave }: R
       if (employee) {
         delete (payload as any).password
       }
-      
+
       await onSave(payload as Employee)
       onClose()
     } catch (error) {
@@ -103,15 +102,25 @@ export default function EmployeeFormModal({ open, onClose, employee, onSave }: R
     field => !(employee && field === "password")
   )
 
+  let buttonText;
+
+  if (loading) {
+    buttonText = "Saving...";
+  } else if (employee) {
+    buttonText = "Update Employee";
+  } else {
+    buttonText = "Save Employee";
+  }
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6">
-      <div 
-        onClick={onClose} 
-        className="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity" 
+      <div
+        onClick={onClose}
+        className="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity"
       />
 
-      <div 
-        onClick={e => e.stopPropagation()} 
+      <div
+        onClick={e => e.stopPropagation()}
         className="relative bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] flex flex-col overflow-hidden"
       >
         <div className="px-6 py-4 border-b">
@@ -133,9 +142,8 @@ export default function EmployeeFormModal({ open, onClose, employee, onSave }: R
                   value={(form as any)[field]}
                   onChange={handleChange}
                   placeholder={field === "employeeId" ? "e.g. EMP-001" : `Enter ${field}`}
-                  className={`w-full border rounded-lg px-3 py-2.5 outline-none transition-all ${
-                    errors[field] ? "border-red-500 focus:ring-red-200" : "border-gray-300 focus:ring-blue-500 focus:border-blue-500"
-                  }`}
+                  className={`w-full border rounded-lg px-3 py-2.5 outline-none transition-all ${errors[field] ? "border-red-500 focus:ring-red-200" : "border-gray-300 focus:ring-blue-500 focus:border-blue-500"
+                    }`}
                   type={field === "password" ? "password" : "text"}
                 />
                 {errors[field] && <span className="text-xs text-red-500">{errors[field]}</span>}
@@ -190,7 +198,7 @@ export default function EmployeeFormModal({ open, onClose, employee, onSave }: R
             className="w-full sm:w-auto px-6 py-2.5 text-white hover:bg-gray-700 disabled"
             disabled={loading}
           >
-            {loading ? "Saving..." : employee ? "Update Employee" : "Save Employee"}
+            {buttonText}
           </Button>
         </div>
       </div>

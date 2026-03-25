@@ -1,7 +1,3 @@
-"use client";
-
-import React from "react";
-
 interface DropdownOption {
   label: string;
   value: string;
@@ -14,7 +10,7 @@ interface DropdownProps {
   className?: string;
 }
 
-export default function Dropdown({ value, options, onChange, className = "" }: DropdownProps) {
+export default function Dropdown({ value, options, onChange, className = "" }:Readonly <DropdownProps>) {
   return (
     <div className={`relative ${className}`}>
       <select

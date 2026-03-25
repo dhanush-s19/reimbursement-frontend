@@ -22,7 +22,6 @@ export default function EmployeePage() {
   const [currentPage, setCurrentPage] = useState(0)
   const [totalPages, setTotalPages] = useState(0)
 
-  // --- Toast State ---
   const [toast, setToast] = useState<{ message: string; type: ToastType } | null>(null)
 
   const showToast = (message: string, type: ToastType) => {
@@ -40,7 +39,10 @@ export default function EmployeePage() {
       })
 
       if (search) params.set("name", search)
-      if (department) params.set("department", department)
+
+      if (department && department !== "") {
+        params.set("department", department)
+      }
 
       const endpoint = search
         ? `/api/users/search?${params}`
@@ -85,7 +87,7 @@ export default function EmployeePage() {
       setIsModalOpen(false)
       setSelectedEmployee(null)
       showToast(
-        `Employee ${selectedEmployee ? "updated" : "created"} successfully`, 
+        `Employee ${selectedEmployee ? "updated" : "created"} successfully`,
         "success"
       )
     } catch (error) {
@@ -93,7 +95,6 @@ export default function EmployeePage() {
     }
   }
 
-  // ... (Keep columns and other handlers as they were)
   const handleDepartmentChange = (value: string) => {
     setDepartment(value)
     setCurrentPage(0)
@@ -173,7 +174,7 @@ export default function EmployeePage() {
       <div className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-20 py-1">
         <Header
           title="Employees"
-          role="ADMIN"
+          role={department}
           onDepartmentChange={handleDepartmentChange}
           search={search}
           onSearchChange={handleSearchChange}

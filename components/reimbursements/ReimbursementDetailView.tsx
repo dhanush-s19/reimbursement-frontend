@@ -130,7 +130,7 @@ export default function ReimbursementDetailView(props: Readonly<Props>) {
           <Card>
             <Card.Content>
               <div className="flex items-center gap-2 mb-4 text-slate-900">
-                <Clock size={18} className="text-slate-400" />
+                <Clock size={18} className="text-slate-400 shrink-0 translate-y-[1px]" />
                 <h3 className="text-sm font-bold">Request Context</h3>
               </div>
               <p className="text-sm leading-relaxed text-slate-600 bg-slate-50 p-4 rounded-lg">

@@ -1,10 +1,11 @@
 'use client'
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { signIn, getSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Button from "../ui/Button";
+import Toast, { ToastType } from "../ui/Toast"; // Imported your component
 
 const LoginPage = () => {
   const router = useRouter();
@@ -13,10 +14,29 @@ const LoginPage = () => {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
+  // --- New Toast State ---
+  const [toast, setToast] = useState<{ show: boolean; msg: string; type: ToastType }>({
+    show: false,
+    msg: "",
+    type: "info",
+  });
+
+  const triggerToast = (msg: string, type: ToastType) => {
+    setToast({ show: true, msg, type });
+  };
+
+  useEffect(() => {
+    fetch("/api/auth/session").catch(() => {});
+  }, []);
+
   const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
     setError("");
+
+    const renderTimer = setTimeout(() => {
+      triggerToast("Waking up server (Render Free Tier)... please wait.", "info");
+    }, 2000);
 
     const res = await signIn("credentials", {
       redirect: false,
@@ -24,8 +44,11 @@ const LoginPage = () => {
       password,
     });
 
+    clearTimeout(renderTimer);
+
     if (res?.error) {
       setError("Invalid email or password");
+      triggerToast("Login failed. Please check your credentials.", "error");
       setIsLoading(false);
     } else if (res?.ok) {
       const sess = await getSession();
@@ -44,6 +67,17 @@ const LoginPage = () => {
 
   return (
     <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4 sm:p-6 lg:p-8">
+      
+      {/* --- Toast Display --- */}
+      {toast.show && (
+        <Toast
+          message={toast.msg}
+          type={toast.type}
+          duration={5000}
+          onClose={() => setToast((prev) => ({ ...prev, show: false }))}
+        />
+      )}
+
       <div className="w-full max-w-5xl bg-white rounded-3xl shadow-xl overflow-hidden flex flex-col md:flex-row min-h-[600px]">
 
         {/* Left Panel: Hidden on small screens, elegant on large */}

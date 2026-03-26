@@ -13,14 +13,13 @@ export function Pagination({
   totalPages,
   onPageChange,
   loading = false,
-}: PaginationProps) {
+}:Readonly <PaginationProps>) {
   const visiblePages = Array.from(
     { length: Math.min(totalPages, 5) },
     (_, idx) => idx
   )
 
   return (
-    /* Removed footer tag, border-t, and bg-white to prevent nesting issues */
     <div className="px-4 py-2 sm:px-8 w-full">
       <div className="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4">
         

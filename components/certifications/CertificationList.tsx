@@ -6,6 +6,8 @@ import { Certification } from "@/types/certification";
 import Table from "../ui/Table";
 import { Award } from "lucide-react";
 import { Pagination } from "../Pagination";
+import { useRouter } from "next/navigation";
+import Button from "../ui/Button";
 
 export default function ActiveCertificationTable() {
   const [certifications, setCertifications] = useState<Certification[]>([]);
@@ -13,7 +15,7 @@ export default function ActiveCertificationTable() {
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const pageSize = 10;
-
+  const router = useRouter();
   const fetchCertifications = useCallback(async () => {
     setLoading(true);
     try {
@@ -36,6 +38,12 @@ export default function ActiveCertificationTable() {
   useEffect(() => {
     fetchCertifications();
   }, [fetchCertifications]);
+
+  const handleRowClick = (cert: Certification) => {
+    router.push(
+      `/certification/enroll?certId=${cert.id}&name=${encodeURIComponent(cert.certification)}`,
+    );
+  };
 
   const columns = [
     {
@@ -85,13 +93,24 @@ export default function ActiveCertificationTable() {
         </span>
       ),
     },
+    {
+      header: "Action",
+      render: (cert: Certification) => (
+        <Button
+          onClick={() => handleRowClick(cert)}
+          variant="outline"
+          size="sm"
+        >
+          Request Enrollment
+        </Button>
+      ),
+    },
   ];
 
   return (
     <div className="flex flex-col min-h-screen bg-[#F9FAFB]">
       <main className="flex-grow py-8 px-4 sm:px-6 lg:px-8 pb-32">
         <div className="max-w-6xl mx-auto">
-          {/* Header Section */}
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
             <div>
               <div className="flex items-center gap-2 mb-1">
@@ -111,8 +130,6 @@ export default function ActiveCertificationTable() {
               </span>
             </div>
           </div>
-
-          {/* Table Container */}
           <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden transition-all duration-300 hover:shadow-md">
             <Table
               data={certifications}
@@ -123,8 +140,6 @@ export default function ActiveCertificationTable() {
           </div>
         </div>
       </main>
-
-      {/* Sticky Footer */}
       <footer className="fixed bottom-0 left-0 right-0 bg-white/80 backdrop-blur-md border-t border-gray-200 py-4 shadow-[0_-4px_20px_-5px_rgba(0,0,0,0.05)]">
         <div className="flex justify-center items-center">
           <Pagination

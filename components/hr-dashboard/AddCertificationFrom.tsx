@@ -14,10 +14,12 @@ const roles = [
 ];
 
 interface AddCertificationFormProps {
-  onAdded?: () => void; 
+  onAdded?: () => void;
 }
 
-export default function AddCertificationForm({ onAdded }: Readonly<AddCertificationFormProps>) {
+export default function AddCertificationForm({
+  onAdded,
+}: Readonly<AddCertificationFormProps>) {
   const [form, setForm] = useState<Certification>({
     category: "Cloud",
     certification: "",
@@ -75,9 +77,10 @@ export default function AddCertificationForm({ onAdded }: Readonly<AddCertificat
     >
       <h2 className="text-xl font-semibold">Add Certification</h2>
 
-      {/* Category */}
       <div>
-        <label htmlFor="select" className="block text-sm font-medium">Category</label>
+        <label htmlFor="select" className="block text-sm font-medium">
+          Category
+        </label>
         <select
           value={form.category}
           onChange={(e) => handleChange("category", e.target.value)}
@@ -90,9 +93,10 @@ export default function AddCertificationForm({ onAdded }: Readonly<AddCertificat
         </select>
       </div>
 
-      {/* Certification Name */}
       <div>
-        <label htmlFor="text" className="block text-sm font-medium">Certification Name</label>
+        <label htmlFor="text" className="block text-sm font-medium">
+          Certification Name
+        </label>
         <input
           type="text"
           value={form.certification}
@@ -103,9 +107,10 @@ export default function AddCertificationForm({ onAdded }: Readonly<AddCertificat
         />
       </div>
 
-      {/* Recommended Roles */}
       <div>
-        <label htmlFor="input" className="block text-sm font-medium mb-2">Recommended Roles</label>
+        <label htmlFor="input" className="block text-sm font-medium mb-2">
+          Recommended Roles
+        </label>
         <div className="grid grid-cols-2 gap-2">
           {roles.map((role) => (
             <label key={role} className="flex items-center gap-2">
@@ -120,9 +125,10 @@ export default function AddCertificationForm({ onAdded }: Readonly<AddCertificat
         </div>
       </div>
 
-      {/* Status */}
       <div>
-        <label htmlFor="select" className="block text-sm font-medium">Status</label>
+        <label htmlFor="select" className="block text-sm font-medium">
+          Status
+        </label>
         <select
           value={form.status}
           onChange={(e) => handleChange("status", e.target.value)}
@@ -134,7 +140,6 @@ export default function AddCertificationForm({ onAdded }: Readonly<AddCertificat
         </select>
       </div>
 
-      {/* Submit */}
       <Button
         variant="secondary"
         type="submit"
@@ -144,9 +149,7 @@ export default function AddCertificationForm({ onAdded }: Readonly<AddCertificat
         {loading ? "Adding..." : "Add Certification"}
       </Button>
 
-      {message && (
-        <p className="text-sm text-gray-600">{message}</p>
-      )}
+      {message && <p className="text-sm text-gray-600">{message}</p>}
     </form>
   );
 }

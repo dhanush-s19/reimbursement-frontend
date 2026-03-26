@@ -13,7 +13,7 @@ export default async function DashboardLayout({
   const session = await getServerSession(authOptions);
   const user = session?.user;
   const role = user?.role || "EMPLOYEE";
-  const id=user?.id||"Undefined"
+  const id = user?.id || "Undefined";
   const menuItems = menus[role as keyof typeof menus];
   return (
     <div className="relative min-h-screen w-full bg-slate-50">
@@ -25,9 +25,7 @@ export default async function DashboardLayout({
       />
 
       <main className="transition-all duration-300 lg:ml-64 min-h-screen w-full lg:w-auto overflow-x-hidden">
-        <div className="w-full h-full flex flex-col">
-          {children}
-        </div>
+        <div className="w-full h-full flex flex-col">{children}</div>
       </main>
     </div>
   );

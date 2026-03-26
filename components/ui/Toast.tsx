@@ -28,8 +28,8 @@ export default function Toast({ message, type, onClose, duration = 3000 }: Reado
   }, [duration])
 
   const handleClose = () => {
-    setIsVisible(false) // Trigger exit animation
-    setTimeout(onClose, 300) // Call the parent onClose after animation finishes
+    setIsVisible(false)
+    setTimeout(onClose, 300)
   }
 
   const styles = {

@@ -137,8 +137,7 @@ export default function HRReimbursementList({ hrId }:Readonly <Props>) {
           </h2>
           <p className="text-gray-500 mt-1">Pending actions required for employee reimbursements</p>
         </header>
-
-        {/* Sorting Controls */}
+        
         <div className="flex flex-wrap items-center gap-3 mb-6">
           <div className="flex items-center text-gray-400 mr-2">
             <ListFilter size={18} />
@@ -173,7 +172,6 @@ export default function HRReimbursementList({ hrId }:Readonly <Props>) {
           </Button>
         </div>
 
-        {/* Table Container */}
         <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden transition-all duration-300 hover:shadow-md">
           <Table
             data={data}
@@ -183,8 +181,6 @@ export default function HRReimbursementList({ hrId }:Readonly <Props>) {
             onRowClick={handleRowClick}
           />
         </div>
-
-        {/* Pagination */}
         {totalPages > 1 && (
           <div className="mt-8 flex justify-center">
             <Pagination

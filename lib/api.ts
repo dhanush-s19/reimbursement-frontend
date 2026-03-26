@@ -16,7 +16,6 @@ export const apiFetch = async (endpoint: string, options: RequestInit = {}) => {
   });
 
   if (!res.ok) {
-
     const errorData = await res.json().catch(() => ({}));
     throw new Error(errorData.message || "API request failed");
   }

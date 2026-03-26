@@ -44,7 +44,6 @@ export default function Sidebar({
         userId={userId}
       />
 
-      {/* 2. MOBILE TOGGLE */}
       <div className="lg:hidden fixed top-4 left-4 z-[60]">
         <Button
           variant="secondary"
@@ -56,7 +55,6 @@ export default function Sidebar({
         </Button>
       </div>
 
-      {/* 3. MOBILE BACKDROP */}
       {isOpen && (
         <Button
           type="button"
@@ -65,7 +63,7 @@ export default function Sidebar({
           onClick={toggleSidebar}
         />
       )}
-      {/* 4. SIDEBAR CONTAINER */}
+
       <aside className={`
         fixed top-0 left-0 z-50 h-screen w-64 bg-white border-r border-gray-200 
         flex flex-col transition-transform duration-300 ease-in-out
@@ -73,7 +71,7 @@ export default function Sidebar({
         lg:translate-x-0
       `}>
 
-        {/* Profile Header */}
+
         <Button
           variant="secondary"
           onClick={() => setIsProfileOpen(true)}
@@ -94,7 +92,7 @@ export default function Sidebar({
           </div>
         </Button>
 
-        {/* Navigation */}
+
         <nav className="flex-1 px-3 py-6 space-y-1 overflow-y-auto">
           {menuItems.map((item) => {
             const isActive = pathname === item.href;
@@ -117,7 +115,7 @@ export default function Sidebar({
           })}
         </nav>
 
-        {/* Footer */}
+
         <div className="p-4 border-t border-gray-100 bg-gray-50/50">
           <Button
             variant="secondary"

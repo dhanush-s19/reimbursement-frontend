@@ -30,8 +30,8 @@ export const ReimbursementActionCard = ({
   onReasonChange,
   onSubmit,
 }: ActionCardProps) => {
-  
-  // Locked State: Clean and professional
+
+
   if (isLocked) {
     return (
       <Card className="border-gray-200 bg-gray-50/50">
@@ -41,7 +41,7 @@ export const ReimbursementActionCard = ({
           </div>
           <Card.Title className="text-gray-900 text-base">Action Restricted</Card.Title>
           <Card.Description className="text-xs text-gray-500 mt-1">
-            This record is currently archived or awaiting a previous step. 
+            This record is currently archived or awaiting a previous step.
             No modifications are permitted at this stage.
           </Card.Description>
         </Card.Content>
@@ -57,9 +57,8 @@ export const ReimbursementActionCard = ({
           <Card.Title className="text-gray-800 text-sm font-semibold">Review Decision</Card.Title>
         </div>
       </Card.Header>
-      
+
       <Card.Content className="p-5 space-y-4">
-        {/* Status Select */}
         <div className="space-y-1.5">
           <label htmlFor="status-select" className="text-[11px] font-bold text-gray-500 uppercase tracking-wider">
             Update Status
@@ -78,8 +77,6 @@ export const ReimbursementActionCard = ({
             ))}
           </select>
         </div>
-
-        {/* Amount Field */}
         {showApprovedAmountField && (
           <div className="space-y-1.5">
             <label htmlFor="approved-amount" className="text-[11px] font-bold text-gray-500 uppercase tracking-wider">
@@ -98,8 +95,6 @@ export const ReimbursementActionCard = ({
             </div>
           </div>
         )}
-
-        {/* Reason Field */}
         {showReasonField && (
           <div className="space-y-1.5">
             <label htmlFor="internal-note" className="text-[11px] font-bold text-gray-500 uppercase tracking-wider">

@@ -3,7 +3,6 @@ import Image from "next/image";
 import Button from "@/components/ui/Button";
 import Card from "@/components/ui/Card";
 import {
-  CheckCircle,
   ShieldCheck,
   Zap,
   ArrowRight,
@@ -15,28 +14,19 @@ import {
 const HomePage = () => {
   return (
     <div className="flex flex-col bg-white text-slate-800">
-      {/* Hero Section */}
       <section className="relative flex flex-col md:flex-row items-center justify-between min-h-screen max-w-7xl mx-auto px-6 py-20 gap-12 overflow-hidden">
-        {/* Left Content */}
         <div className="md:w-3/5 flex flex-col gap-8 text-center md:text-left items-center md:items-start z-10">
-          {/* Refined Badge */}
           <div className="inline-flex items-center px-4 py-1.5 rounded-full bg-emerald-50 text-emerald-600 border border-emerald-100 text-sm font-semibold tracking-tight">
             <TrendingUp size={14} className="mr-2" />
             Streamlined Expense Management
           </div>
-
-          {/* The "Middle Ground" Title */}
           <h1 className="text-6xl md:text-8xl font-extrabold text-slate-900 tracking-tighter leading-[0.9]">
             Reimburse<span className="text-emerald-600">Pro</span>
           </h1>
-
-          {/* Slightly More Impactful Description */}
           <p className="text-xl md:text-2xl text-slate-600 max-w-xl leading-relaxed font-medium">
             Stop chasing paper trails. Digitize your reimbursement workflow and
             track approvals in real-time with zero friction.
           </p>
-
-          {/* Actions */}
           <div className="flex flex-wrap justify-center md:justify-start gap-5 w-full mt-2">
             <Link href="/login">
               <Button
@@ -51,7 +41,6 @@ const HomePage = () => {
           </div>
         </div>
 
-        {/* Right Side - Logo */}
         <div className="md:w-2/5 flex justify-center items-center">
           <div className="relative w-full max-w-[450px] aspect-square flex items-center justify-center">
             <div className="absolute inset-0 bg-emerald-100/40 blur-[100px] rounded-full" />
@@ -67,7 +56,6 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* Stats Section - Reduced Contrast */}
       <section className="py-16 bg-slate-950 text-slate-100">
         <div className="max-w-7xl mx-auto px-4 grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
           {[
@@ -88,7 +76,6 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* Features Section */}
       <section className="py-24 px-4 md:px-6 bg-slate-50">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-20">
@@ -146,7 +133,6 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* Process Section - Less extreme contrast than dark-mode-style */}
       <section className="py-24 bg-white border-y border-slate-100">
         <div className="max-w-6xl mx-auto px-4">
           <h2 className="text-3xl md:text-4xl font-extrabold text-center mb-20 text-slate-900">
@@ -187,7 +173,6 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* Final Call to Action - Reduced Contrast */}
       <section className="py-24 px-4 bg-white">
         <div className="max-w-5xl mx-auto">
           <div className="bg-emerald-600 rounded-3xl p-12 md:p-16 flex flex-col md:flex-row items-center justify-between gap-10 relative overflow-hidden shadow-2xl shadow-emerald-100">
@@ -210,13 +195,11 @@ const HomePage = () => {
                 </Button>
               </Link>
             </div>
-            {/* Decorative element */}
             <div className="absolute -bottom-10 -right-10 w-64 h-64 bg-emerald-400 rounded-full opacity-50 blur-3xl"></div>
           </div>
         </div>
       </section>
 
-      {/* Footer */}
       <footer className="bg-white border-t border-slate-100 py-12">
         <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-8">
           <div className="flex items-center gap-2">

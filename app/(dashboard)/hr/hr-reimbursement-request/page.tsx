@@ -2,7 +2,9 @@ import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import HRReimbursementList from "@/components/reimbursements/HrForwadedRequest";
 
 import { getServerSession } from "next-auth";
-
+export const metadata = {
+  title: "Requests",
+};
 export default async function Page() {
   const session = await getServerSession(authOptions);
   const id = session?.user?.id;
@@ -12,8 +14,8 @@ export default async function Page() {
   }
 
   return (
-        <div className="mt-8">
-          <HRReimbursementList hrId={id} />
-        </div>
+    <div className="mt-8">
+      <HRReimbursementList hrId={id} />
+    </div>
   );
 }

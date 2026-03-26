@@ -52,7 +52,6 @@ export const authOptions: AuthOptions = {
         );
 
         const data = await res.json();
-        console.log("Login response:", res.status, data);
 
         if (!res.ok || !data.token) return null;
 

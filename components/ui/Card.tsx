@@ -46,7 +46,6 @@ const Footer = ({ children, className = "" }: { children: React.ReactNode; class
   </div>
 );
 
-// Assign sub-components
 Card.Header = Header;
 Card.Title = Title;
 Card.Description = Description;

@@ -98,7 +98,6 @@ export default function Table<T>({
         </div>
       </div>
 
-      {/* Mobile Tip (Optional) */}
       <p className="mt-2 text-center text-xs text-gray-400 sm:hidden">
         ← Swipe to view more →
       </p>

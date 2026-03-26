@@ -7,7 +7,7 @@ import AddCertificationForm from "./AddCertificationFrom";
 import Table from "../ui/Table";
 import Button from "../ui/Button";
 import Toast, { ToastType } from "../ui/Toast";
-import { Pagination } from "../Pagination"; // Import Pagination
+import { Pagination } from "../Pagination";
 
 export default function CertificationTable() {
   const [certifications, setCertifications] = useState<Certification[]>([]);
@@ -15,15 +15,13 @@ export default function CertificationTable() {
   const [updatingId, setUpdatingId] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [showAddModal, setShowAddModal] = useState(false);
-
-  // Pagination State
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const pageSize = 10;
-
-  // Toast State
-  const [toast, setToast] = useState<{ message: string; type: ToastType } | null>(null);
-
+  const [toast, setToast] = useState<{
+    message: string;
+    type: ToastType;
+  } | null>(null);
   const showToast = (message: string, type: ToastType) => {
     setToast({ message, type });
   };
@@ -72,11 +70,14 @@ export default function CertificationTable() {
 
   const deleteCertification = async (cert: Certification) => {
     if (!cert.id) return;
-    if (!confirm(`Are you sure you want to delete "${cert.certification}"?`)) return;
+    if (!confirm(`Are you sure you want to delete "${cert.certification}"?`))
+      return;
 
     try {
       setDeletingId(cert.id);
-      await apiFetch(`/api/certifications/delete/${cert.id}`, { method: "DELETE" });
+      await apiFetch(`/api/certifications/delete/${cert.id}`, {
+        method: "DELETE",
+      });
       fetchCertifications();
       showToast("Certification deleted successfully", "success");
     } catch (err) {
@@ -89,7 +90,7 @@ export default function CertificationTable() {
 
   const handleAdded = () => {
     setShowAddModal(false);
-    setCurrentPage(0); 
+    setCurrentPage(0);
     fetchCertifications();
     showToast("Certification added successfully", "success");
   };
@@ -112,7 +113,9 @@ export default function CertificationTable() {
     {
       header: "Certification",
       render: (cert: Certification) => (
-        <span className="font-semibold text-gray-800">{cert.certification}</span>
+        <span className="font-semibold text-gray-800">
+          {cert.certification}
+        </span>
       ),
     },
     {
@@ -127,10 +130,11 @@ export default function CertificationTable() {
       header: "Status",
       render: (cert: Certification) => (
         <span
-          className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${cert.status === "Active"
+          className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+            cert.status === "Active"
               ? "bg-green-100 text-green-800"
               : "bg-yellow-100 text-yellow-800"
-            }`}
+          }`}
         >
           {cert.status}
         </span>
@@ -176,7 +180,9 @@ export default function CertificationTable() {
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
           <div>
             <h1 className="text-2xl font-bold text-gray-900">Certifications</h1>
-            <p className="text-sm text-gray-500">Manage and track your professional certifications</p>
+            <p className="text-sm text-gray-500">
+              Manage and track your professional certifications
+            </p>
           </div>
           <Button
             variant="secondary"
@@ -209,7 +215,9 @@ export default function CertificationTable() {
                 <span>&times;</span>
               </Button>
               <div className="mt-2">
-                <h2 className="text-xl font-bold mb-4 text-gray-900">Add Certification</h2>
+                <h2 className="text-xl font-bold mb-4 text-gray-900">
+                  Add Certification
+                </h2>
                 <AddCertificationForm onAdded={handleAdded} />
               </div>
             </div>

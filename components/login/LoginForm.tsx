@@ -5,7 +5,7 @@ import { signIn, getSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Button from "../ui/Button";
-import Toast, { ToastType } from "../ui/Toast"; // Imported your component
+import Toast, { ToastType } from "../ui/Toast"; 
 
 const LoginPage = () => {
   const router = useRouter();
@@ -14,7 +14,6 @@ const LoginPage = () => {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  // --- New Toast State ---
   const [toast, setToast] = useState<{ show: boolean; msg: string; type: ToastType }>({
     show: false,
     msg: "",
@@ -68,7 +67,7 @@ const LoginPage = () => {
   return (
     <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4 sm:p-6 lg:p-8">
       
-      {/* --- Toast Display --- */}
+     
       {toast.show && (
         <Toast
           message={toast.msg}
@@ -80,7 +79,7 @@ const LoginPage = () => {
 
       <div className="w-full max-w-5xl bg-white rounded-3xl shadow-xl overflow-hidden flex flex-col md:flex-row min-h-[600px]">
 
-        {/* Left Panel: Hidden on small screens, elegant on large */}
+    
         <div className="hidden md:flex md:w-1/2 bg-indigo-50 p-8 lg:p-12 flex-col justify-center items-center text-center">
           <div className="max-w-sm">
             <h2 className="text-3xl lg:text-4xl font-bold text-slate-900 mb-4">
@@ -101,10 +100,9 @@ const LoginPage = () => {
           </div>
         </div>
 
-        {/* Right Panel: The Form */}
+
         <div className="w-full md:w-1/2 p-8 sm:p-12 lg:p-16 flex flex-col justify-center">
           <div className="w-full max-w-md mx-auto">
-            {/* Mobile-only Logo or Greeting */}
             <div className="md:hidden text-center mb-8">
               <h2 className="text-2xl font-bold text-slate-900">Sign In</h2>
               <p className="text-slate-500 text-sm">Access your reimbursement portal</p>

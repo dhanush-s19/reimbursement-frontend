@@ -1,17 +1,17 @@
-"use client"
+"use client";
 
-import React from "react"
-import Button from "../ui/Button"
+import React from "react";
+import Button from "../ui/Button";
 
 interface Props {
-  onAdd: () => void
+  onAdd: () => void;
 }
 
-function EmployeeActions({ onAdd }: Props) {
+function EmployeeActions({ onAdd }: Readonly<Props>) {
   const handleAdd = () => {
-    console.log("Add Employee button clicked")
-    onAdd()
-  }
+    console.log("Add Employee button clicked");
+    onAdd();
+  };
 
   return (
     <Button
@@ -22,7 +22,7 @@ function EmployeeActions({ onAdd }: Props) {
     >
       Add Employee
     </Button>
-  )
+  );
 }
 
-export default React.memo(EmployeeActions)
+export default React.memo(EmployeeActions);

@@ -2,6 +2,10 @@ import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import ReimbursementForm from "@/components/reimbursements/ReimbursementForm";
 import { getServerSession } from "next-auth";
 
+export const metadata = {
+  title: "Request Reimbusrement",
+};
+
 export default async function EmployeePage() {
   const session = await getServerSession(authOptions);
   const employeeId = session?.user?.employeeId;

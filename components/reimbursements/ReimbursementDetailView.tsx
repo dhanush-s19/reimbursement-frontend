@@ -1,7 +1,8 @@
-import React from "react";
-import { Maximize2, FileText, IndianRupee, Clock, Tag, ChevronRight, Users } from "lucide-react";
+import React, { useState } from "react";
+import { Maximize2, FileText, IndianRupee, Clock, Tag, ChevronRight, Users, Award } from "lucide-react";
 import Card from "../ui/Card";
 import { ReimbursementActionCard } from "./ReimbursementActionCard";
+import Button from "../ui/Button";
 
 type Props = {
   readonly reimbursement: any;
@@ -21,25 +22,25 @@ type Props = {
 export default function ReimbursementDetailView(props: Readonly<Props>) {
   const { reimbursement } = props;
   const invoiceUrl = reimbursement.fileUrls?.[0] || null;
-  const isPdf = invoiceUrl?.toLowerCase().endsWith(".pdf");
-  const hasInvoice = !!invoiceUrl;
+  const certificateUrl = reimbursement.fileUrls?.[1] || null;
+  const [activeView, setActiveView] = useState<"invoice" | "certificate">("invoice");
 
-  // Logic for Team Member count
-  const isTeamEvent = reimbursement.type === "TEAM_EVENTS";
-  const teamCount = reimbursement.teamMemberIds?.length || 0;
+  const currentUrl = activeView === "invoice" ? invoiceUrl : certificateUrl;
+  const hasCertificate = !!certificateUrl;
+  const isPdf = currentUrl?.toLowerCase().endsWith(".pdf");
 
   const openFullScreen = () => {
-    if (invoiceUrl) window.open(invoiceUrl, "_blank", "noopener,noreferrer");
+    if (currentUrl) window.open(currentUrl, "_blank", "noopener,noreferrer");
   };
 
-  const renderAttachment = () => {
-    if (!hasInvoice) {
+  const renderAttachment = (url: string | null) => {
+    if (!url) {
       return (
         <div className="text-center p-12">
           <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
             <FileText className="text-slate-300" size={32} />
           </div>
-          <p className="text-slate-500 text-sm font-medium">No attachment provided.</p>
+          <p className="text-slate-500 text-sm font-medium">No file provided for this section.</p>
         </div>
       );
     }
@@ -47,23 +48,25 @@ export default function ReimbursementDetailView(props: Readonly<Props>) {
     if (isPdf) {
       return (
         <iframe
-          src={`${invoiceUrl}#toolbar=0`}
-          className="w-full h-[600px] rounded border border-slate-200"
-          title="Invoice Preview"
+          src={`${url}#toolbar=0`}
+          className="w-full h-[600px] rounded border border-slate-200 bg-white"
+          title="Document Preview"
         />
       );
     }
 
     return (
-      <button onClick={openFullScreen} className="cursor-zoom-in">
-        <img src={invoiceUrl} alt="Invoice" className="max-w-full h-auto rounded border border-slate-200" />
+      <button onClick={openFullScreen} className="cursor-zoom-in flex justify-center w-full">
+        <img src={url} alt="Evidence" className="max-w-full h-auto rounded border border-slate-200" />
       </button>
     );
   };
 
+  const isTeamEvent = reimbursement.type === "TEAM_EVENTS";
+  const teamCount = reimbursement.teamMemberIds?.length || 0;
+
   return (
     <div className="max-w-6xl mx-auto min-h-screen bg-slate-50/50 p-4 lg:p-8 font-sans antialiased text-slate-900">
-      {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 pb-6 border-b border-slate-200">
         <div>
           <div className="flex items-center gap-2 text-xs font-semibold text-slate-500 uppercase tracking-widest mb-2">
@@ -78,26 +81,51 @@ export default function ReimbursementDetailView(props: Readonly<Props>) {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-        {/* Evidence Column */}
         <div className="lg:col-span-7">
           <Card>
-            <Card.Header className="flex justify-between items-center">
-              <Card.Title className="text-sm flex items-center gap-2">
-                <FileText size={18} className="text-slate-400" /> Evidence
-              </Card.Title>
-              {hasInvoice && (
-                <button onClick={openFullScreen} className="text-xs font-bold flex items-center gap-1">
-                  <Maximize2 size={14} /> Fullscreen
-                </button>
-              )}
+            <Card.Header className="space-y-4">
+              <div className="flex justify-between items-center">
+                <Card.Title className="text-sm flex items-center gap-2">
+                  <FileText size={18} className="text-slate-400" /> Evidence
+                </Card.Title>
+                {currentUrl && (
+                  <button onClick={openFullScreen} className="text-xs font-bold flex items-center gap-1 hover:text-slate-600">
+                    <Maximize2 size={14} /> Fullscreen
+                  </button>
+                )}
+              </div>
+
+              <div className="flex bg-slate-100 p-1 rounded-lg w-fit border border-slate-200 gap-1">
+                <Button
+                  size="sm"
+                  variant={activeView === "invoice" ? "secondary" : "ghost"}
+                  onClick={() => setActiveView("invoice")}
+                  className={`text-xs font-bold px-4 py-1.5 ${activeView === "invoice" ? " shadow-sm" : "text-slate-500"
+                    }`}
+                >
+                  Invoice
+                </Button>
+
+                {hasCertificate && (
+                  <Button
+                    size="sm"
+                    variant={activeView === "certificate" ? "secondary" : "ghost"}
+                    onClick={() => setActiveView("certificate")}
+                    className={`text-xs font-bold px-4 py-1.5 flex items-center gap-1.5 ${activeView === "certificate" ? "shadow-sm" : "text-slate-500"
+                      }`}
+                  >
+                    <Award size={14} />
+                    Certificate
+                  </Button>
+                )}
+              </div>
             </Card.Header>
-            <Card.Content className="bg-slate-50 flex items-center justify-center">
-              {renderAttachment()}
+            <Card.Content className="bg-slate-50 flex items-center justify-center min-h-[400px]">
+              {renderAttachment(currentUrl)}
             </Card.Content>
           </Card>
         </div>
 
-        {/* Actions Column */}
         <div className="lg:col-span-5 space-y-6">
           <Card>
             <Card.Content>
@@ -112,7 +140,6 @@ export default function ReimbursementDetailView(props: Readonly<Props>) {
                   <p className="text-sm font-bold uppercase text-slate-700">{reimbursement.type?.replaceAll("_", " ")}</p>
                 </div>
 
-                {/* Team Members Count Section */}
                 {isTeamEvent && (
                   <div className="col-span-2 pt-4 border-t border-slate-100">
                     <p className="text-sm text-slate-500 flex items-center gap-1.5">

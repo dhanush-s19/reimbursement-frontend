@@ -93,7 +93,6 @@ export default function ReimbursementDetail({
 
       showToast("Update successful!", "success");
       
-      // Delay redirect slightly so user sees the success toast
       setTimeout(() => {
         router.push("/reimbursement-request");
         router.refresh();

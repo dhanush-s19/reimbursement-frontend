@@ -28,7 +28,7 @@ export interface Reimbursement {
   createdAt: string;
   updatedAt: string;
 
-  type: "NORMAL" | "CERTIFICATE"|"TEAM_EVENTS";
+  type: "NORMAL" | "CERTIFICATE" | "TEAM_EVENTS";
   requiresHrApproval?: boolean;
   approvedAmount?: number;
 }

@@ -14,10 +14,6 @@ type Props = Readonly<{
   role: string;
 }>;
 
-/**
- * Moved outside to prevent re-creation on every render 
- * and satisfy the "Move component definition out of parent" rule.
- */
 const SortIcon = ({ field, sortBy, direction }: { field: string; sortBy: string; direction: string }) => {
   if (sortBy !== field) return null;
   return direction === "asc" ? (
@@ -176,7 +172,6 @@ export default function ReimbursementList({ role }: Props) {
               <span className="text-xs font-bold uppercase ml-2 tracking-widest">Sort By:</span>
             </div>
 
-            {/* Redundant conditional logic fixed: variant is now determined by active state */}
             <Button
               size="sm"
               variant={sortBy === "amount" ? "secondary" : "outline"}

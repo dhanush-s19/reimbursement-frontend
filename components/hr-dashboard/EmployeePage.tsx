@@ -1,109 +1,113 @@
-"use client"
+"use client";
 
-import { useEffect, useState, useCallback } from "react"
-import Header from "../ui/Header"
-import { Employee } from "@/types/employee"
-import EmployeeModal from "./EmployeeModal"
-import { apiFetch } from "@/lib/api"
-import EmployeeActions from "./EmployeeActions"
-import Table from "../ui/Table"
-import { Pagination } from "../Pagination"
-import { Pencil, Trash2 } from "lucide-react"
-import Toast, { ToastType } from "../ui/Toast"
-
+import { useEffect, useState, useCallback } from "react";
+import Header from "../ui/Header";
+import { Employee } from "@/types/employee";
+import EmployeeModal from "./EmployeeModal";
+import { apiFetch } from "@/lib/api";
+import EmployeeActions from "./EmployeeActions";
+import Table from "../ui/Table";
+import { Pagination } from "../Pagination";
+import { Pencil, Trash2 } from "lucide-react";
+import Toast, { ToastType } from "../ui/Toast";
 
 export default function EmployeePage() {
-  const [employees, setEmployees] = useState<Employee[]>([])
-  const [loading, setLoading] = useState(true)
-  const [department, setDepartment] = useState("")
-  const [isModalOpen, setIsModalOpen] = useState(false)
-  const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(null)
-  const [search, setSearch] = useState("")
-  const [currentPage, setCurrentPage] = useState(0)
-  const [totalPages, setTotalPages] = useState(0)
+  const [employees, setEmployees] = useState<Employee[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [department, setDepartment] = useState("");
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(
+    null,
+  );
+  const [search, setSearch] = useState("");
+  const [currentPage, setCurrentPage] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
 
-  const [toast, setToast] = useState<{ message: string; type: ToastType } | null>(null)
+  const [toast, setToast] = useState<{
+    message: string;
+    type: ToastType;
+  } | null>(null);
 
   const showToast = (message: string, type: ToastType) => {
-    setToast({ message, type })
-  }
+    setToast({ message, type });
+  };
 
-  const pageSize = 10
+  const pageSize = 10;
 
   const fetchEmployees = useCallback(async () => {
-    setLoading(true)
+    setLoading(true);
     try {
       const params = new URLSearchParams({
         page: currentPage.toString(),
         size: pageSize.toString(),
-      })
+      });
 
-      if (search) params.set("name", search)
+      if (search) params.set("name", search);
 
       if (department && department !== "") {
-        params.set("department", department)
+        params.set("department", department);
       }
 
       const endpoint = search
         ? `/api/users/search?${params}`
-        : `/api/users?${params}`
+        : `/api/users?${params}`;
 
-      const data = await apiFetch(endpoint)
-      const list = Array.isArray(data) ? data : data?.content || []
-      setEmployees(list)
-      setTotalPages(Array.isArray(data) ? 1 : data?.totalPages || 1)
+      const data = await apiFetch(endpoint);
+      const list = Array.isArray(data) ? data : data?.content || [];
+      setEmployees(list);
+      setTotalPages(Array.isArray(data) ? 1 : data?.totalPages || 1);
     } catch (error) {
-      showToast("Failed to fetch employees", "error")
+      showToast("Failed to fetch employees", "error");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }, [department, search, currentPage])
+  }, [department, search, currentPage]);
 
   useEffect(() => {
-    fetchEmployees()
-  }, [fetchEmployees])
+    fetchEmployees();
+  }, [fetchEmployees]);
 
   const deleteEmployee = async (id: string) => {
     try {
-      await apiFetch(`/api/users/${id}`, { method: "DELETE" })
-      await fetchEmployees()
-      showToast("Employee deleted successfully", "success")
+      await apiFetch(`/api/users/${id}`, { method: "DELETE" });
+      await fetchEmployees();
+      showToast("Employee deleted successfully", "success");
     } catch (error) {
-      showToast("Failed to delete employee", "error")
+      showToast("Failed to delete employee", "error");
     }
-  }
+  };
 
   const handleSave = async (employee: Employee) => {
     try {
-      const method = selectedEmployee ? "PUT" : "POST"
-      const url = selectedEmployee ? `/api/users/${employee.id}` : "/api/users"
+      const method = selectedEmployee ? "PUT" : "POST";
+      const url = selectedEmployee ? `/api/users/${employee.id}` : "/api/users";
 
       await apiFetch(url, {
         method,
         body: JSON.stringify(employee),
-      })
+      });
 
-      await fetchEmployees()
-      setIsModalOpen(false)
-      setSelectedEmployee(null)
+      await fetchEmployees();
+      setIsModalOpen(false);
+      setSelectedEmployee(null);
       showToast(
         `Employee ${selectedEmployee ? "updated" : "created"} successfully`,
-        "success"
-      )
+        "success",
+      );
     } catch (error) {
-      showToast("Error saving employee data", "error")
+      showToast("Error saving employee data", "error");
     }
-  }
+  };
 
   const handleDepartmentChange = (value: string) => {
-    setDepartment(value)
-    setCurrentPage(0)
-  }
+    setDepartment(value);
+    setCurrentPage(0);
+  };
 
   const handleSearchChange = (value: string) => {
-    setSearch(value)
-    setCurrentPage(0)
-  }
+    setSearch(value);
+    setCurrentPage(0);
+  };
 
   const columns = [
     {
@@ -137,8 +141,8 @@ export default function EmployeePage() {
         <div className="flex justify-end gap-1">
           <button
             onClick={() => {
-              setSelectedEmployee(e)
-              setIsModalOpen(true)
+              setSelectedEmployee(e);
+              setIsModalOpen(true);
             }}
             className="p-2 text-black-600 hover:bg-blue-50 rounded-lg transition-colors"
           >
@@ -147,7 +151,7 @@ export default function EmployeePage() {
 
           <button
             onClick={() => {
-              if (confirm('Are you sure you want to delete this employee?')) {
+              if (confirm("Are you sure you want to delete this employee?")) {
                 deleteEmployee(e.id);
               }
             }}
@@ -158,11 +162,10 @@ export default function EmployeePage() {
         </div>
       ),
     },
-  ]
+  ];
 
   return (
     <div className="flex flex-col min-h-screen w-full bg-gray-50 overflow-x-hidden">
-      {/* Toast Notification */}
       {toast && (
         <Toast
           message={toast.message}
@@ -191,8 +194,8 @@ export default function EmployeePage() {
           actions={
             <EmployeeActions
               onAdd={() => {
-                setSelectedEmployee(null)
-                setIsModalOpen(true)
+                setSelectedEmployee(null);
+                setIsModalOpen(true);
               }}
             />
           }
@@ -228,5 +231,5 @@ export default function EmployeePage() {
         onClose={() => setIsModalOpen(false)}
       />
     </div>
-  )
+  );
 }

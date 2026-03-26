@@ -1,7 +1,10 @@
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import ReimbursementList from "@/components/reimbursements/ReimburesementList";
-
 import { getServerSession } from "next-auth";
+
+export const metadata = {
+  title: "Reimbursement List",
+};
 
 export default async function Page() {
   const session = await getServerSession(authOptions);

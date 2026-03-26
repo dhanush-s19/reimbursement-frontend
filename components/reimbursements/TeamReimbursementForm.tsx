@@ -95,7 +95,7 @@ export default function TeamReimbursementForm({
                     <div>
                         <label htmlFor="number" className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-1 ml-1">Total Amount</label>
                         <div className="relative">
-                            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 font-medium">$</span>
+                            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 font-medium">₹</span>
                             <input
                                 type="number"
                                 step="0.01"
@@ -136,7 +136,7 @@ export default function TeamReimbursementForm({
                         className={`flex-1 px-4 py-3 text-sm font-semibold text-white rounded-xl transition-all shadow-md 
                             ${loading
                                 ? 'cursor-not-allowed bg-gray-400'
-                                : 'bg-indigo-600 hover:bg-indigo-700 hover:shadow-lg hover:-translate-y-0.5'
+                                : 'hover:bg-gray-700 hover:shadow-lg hover:-translate-y-0.5'
                             }`}
                     >
                         {loading ? 'Submitting...' : 'Submit Request'}

@@ -85,7 +85,6 @@ export default function MyReimbursementPage({ role }: Readonly<MyReimbursementPa
           </Card.Header>
 
           <Card.Content className="space-y-6">
-            {/* Description Section */}
             <div>
               <label className="flex items-center gap-2 text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
                 <Info size={14} /> Description
@@ -109,7 +108,6 @@ export default function MyReimbursementPage({ role }: Readonly<MyReimbursementPa
               </div>
             )}
 
-            {/* Amount Displays */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
               <div className="p-4 rounded-2xl bg-gray-50 border border-gray-100">
                 <span className="text-xs font-medium text-gray-500 block mb-1 uppercase">Requested</span>

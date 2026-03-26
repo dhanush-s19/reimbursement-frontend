@@ -1,14 +1,14 @@
-"use client"
+"use client";
 
-import { useState, useEffect, useCallback } from "react"
-import { Employee } from "@/types/employee"
-import Button from "../ui/Button"
+import { useState, useEffect, useCallback } from "react";
+import { Employee } from "@/types/employee";
+import Button from "../ui/Button";
 
 interface Props {
-  open: boolean
-  onClose: () => void
-  onSave: (employee: Employee) => Promise<void>
-  employee?: Employee | null
+  open: boolean;
+  onClose: () => void;
+  onSave: (employee: Employee) => Promise<void>;
+  employee?: Employee | null;
 }
 
 const defaultForm = {
@@ -19,88 +19,93 @@ const defaultForm = {
   password: "",
   role: "EMPLOYEE",
   department: "DEVELOPMENT",
-}
+};
 
-export default function EmployeeFormModal({ open, onClose, employee, onSave }: Readonly<Props>) {
-  const [form, setForm] = useState<Employee | typeof defaultForm>(defaultForm)
-  const [errors, setErrors] = useState<Record<string, string>>({})
-  const [loading, setLoading] = useState(false)
+export default function EmployeeFormModal({
+  open,
+  onClose,
+  employee,
+  onSave,
+}: Readonly<Props>) {
+  const [form, setForm] = useState<Employee | typeof defaultForm>(defaultForm);
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (!open) return
-    setForm(employee ? { ...employee, password: "" } : defaultForm)
-    setErrors({})
-  }, [open, employee])
+    if (!open) return;
+    setForm(employee ? { ...employee, password: "" } : defaultForm);
+    setErrors({});
+  }, [open, employee]);
 
   const validate = (): boolean => {
-    const newErrors: Record<string, string> = {}
+    const newErrors: Record<string, string> = {};
 
-    if (!form.employeeId.trim()) newErrors.employeeId = "Employee ID is required"
+    if (!form.employeeId.trim())
+      newErrors.employeeId = "Employee ID is required";
 
     if (!form.name.trim()) {
-      newErrors.name = "Name is required"
+      newErrors.name = "Name is required";
     } else if (form.name.length < 2 || form.name.length > 100) {
-      newErrors.name = "Name must be between 2 and 100 characters"
+      newErrors.name = "Name must be between 2 and 100 characters";
     }
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!form.email.trim()) {
-      newErrors.email = "Email is required"
+      newErrors.email = "Email is required";
     } else if (!emailRegex.test(form.email)) {
-      newErrors.email = "Invalid email format"
+      newErrors.email = "Invalid email format";
     }
-
 
     if (!employee) {
       if (!form.password) {
-        newErrors.password = "Password is required"
+        newErrors.password = "Password is required";
       } else if (form.password.length < 6) {
-        newErrors.password = "Password must be at least 6 characters long"
+        newErrors.password = "Password must be at least 6 characters long";
       }
     }
 
-    if (!form.department) newErrors.department = "Department is required"
-    if (!form.role) newErrors.role = "Role is required"
+    if (!form.department) newErrors.department = "Department is required";
+    if (!form.role) newErrors.role = "Role is required";
 
-    setErrors(newErrors)
-    return Object.keys(newErrors).length === 0
-  }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const handleChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-      const { name, value } = e.target
-      setForm(prev => ({ ...prev, [name]: value }))
+      const { name, value } = e.target;
+      setForm((prev) => ({ ...prev, [name]: value }));
       if (errors[name]) {
-        setErrors(prev => ({ ...prev, [name]: "" }))
+        setErrors((prev) => ({ ...prev, [name]: "" }));
       }
     },
-    [errors]
-  )
+    [errors],
+  );
 
   const handleSubmit = useCallback(async () => {
-    if (!validate()) return
+    if (!validate()) return;
 
-    setLoading(true)
+    setLoading(true);
     try {
-      const payload = { ...form }
+      const payload = { ...form };
       if (employee) {
-        delete (payload as any).password
+        delete (payload as any).password;
       }
 
-      await onSave(payload as Employee)
-      onClose()
+      await onSave(payload as Employee);
+      onClose();
     } catch (error) {
-      console.error("Failed to save employee", error)
+      console.error("Failed to save employee", error);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }, [form, onSave, onClose, employee])
+  }, [form, onSave, onClose, employee]);
 
-  if (!open) return null
+  if (!open) return null;
 
   const inputFields = ["employeeId", "name", "email", "password"].filter(
-    field => !(employee && field === "password")
-  )
+    (field) => !(employee && field === "password"),
+  );
 
   let buttonText;
 
@@ -120,19 +125,21 @@ export default function EmployeeFormModal({ open, onClose, employee, onSave }: R
       />
 
       <div
-        onClick={e => e.stopPropagation()}
+        onClick={(e) => e.stopPropagation()}
         className="relative bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] flex flex-col overflow-hidden"
       >
         <div className="px-6 py-4 border-b">
           <h2 className="text-xl font-bold text-gray-800">
             {employee ? "Edit Employee" : "Add New Employee"}
           </h2>
-          <p className="text-sm text-gray-500">Enter the details below to manage the staff member.</p>
+          <p className="text-sm text-gray-500">
+            Enter the details below to manage the staff member.
+          </p>
         </div>
 
         <div className="flex-1 overflow-y-auto p-6 space-y-5">
           <div className="grid grid-cols-1 gap-4">
-            {inputFields.map(field => (
+            {inputFields.map((field) => (
               <div key={field} className="flex flex-col gap-1.5">
                 <label className="text-sm font-medium text-gray-700 capitalize">
                   {field === "employeeId" ? "Employee ID" : field}
@@ -141,18 +148,30 @@ export default function EmployeeFormModal({ open, onClose, employee, onSave }: R
                   name={field}
                   value={(form as any)[field]}
                   onChange={handleChange}
-                  placeholder={field === "employeeId" ? "e.g. EMP-001" : `Enter ${field}`}
-                  className={`w-full border rounded-lg px-3 py-2.5 outline-none transition-all ${errors[field] ? "border-red-500 focus:ring-red-200" : "border-gray-300 focus:ring-blue-500 focus:border-blue-500"
-                    }`}
+                  placeholder={
+                    field === "employeeId" ? "e.g. EMP-001" : `Enter ${field}`
+                  }
+                  className={`w-full border rounded-lg px-3 py-2.5 outline-none transition-all ${
+                    errors[field]
+                      ? "border-red-500 focus:ring-red-200"
+                      : "border-gray-300 focus:ring-blue-500 focus:border-blue-500"
+                  }`}
                   type={field === "password" ? "password" : "text"}
                 />
-                {errors[field] && <span className="text-xs text-red-500">{errors[field]}</span>}
+                {errors[field] && (
+                  <span className="text-xs text-red-500">{errors[field]}</span>
+                )}
               </div>
             ))}
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="flex flex-col gap-1.5">
-                <label htmlFor="role" className="text-sm font-medium text-gray-700">Role</label>
+                <label
+                  htmlFor="role"
+                  className="text-sm font-medium text-gray-700"
+                >
+                  Role
+                </label>
                 <select
                   name="role"
                   value={form.role}
@@ -167,7 +186,12 @@ export default function EmployeeFormModal({ open, onClose, employee, onSave }: R
               </div>
 
               <div className="flex flex-col gap-1.5">
-                <label htmlFor="department" className="text-sm font-medium text-gray-700">Department</label>
+                <label
+                  htmlFor="department"
+                  className="text-sm font-medium text-gray-700"
+                >
+                  Department
+                </label>
                 <select
                   name="department"
                   value={form.department}
@@ -189,7 +213,11 @@ export default function EmployeeFormModal({ open, onClose, employee, onSave }: R
         </div>
 
         <div className="px-6 py-4 bg-gray-50 border-t flex flex-col-reverse sm:flex-row justify-end gap-3">
-          <Button variant="outline" onClick={onClose} className="w-full sm:w-auto px-6 py-2.5">
+          <Button
+            variant="outline"
+            onClick={onClose}
+            className="w-full sm:w-auto px-6 py-2.5"
+          >
             Cancel
           </Button>
           <Button
@@ -203,5 +231,5 @@ export default function EmployeeFormModal({ open, onClose, employee, onSave }: R
         </div>
       </div>
     </div>
-  )
+  );
 }

@@ -1,10 +1,11 @@
-
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import ReimbursementDetail from "@/components/reimbursements/ReimbursementDetails";
 import { getServerSession } from "next-auth";
-
+export const metadata = {
+  title: "Details",
+};
 export default async function Page() {
-  const session = await getServerSession(authOptions)
+  const session = await getServerSession(authOptions);
   const id = session?.user.id ?? "";
   const role = session?.user.role ?? "";
 

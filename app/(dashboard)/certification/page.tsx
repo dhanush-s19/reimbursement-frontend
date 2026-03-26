@@ -1,7 +1,9 @@
 import ActiveCertificationTable from "@/components/certifications/CertificationList";
-
-export default function Certification(){
-    return(
+export const metadata = {
+    title: "Certification",
+};
+export default function Certification() {
+    return (
         <ActiveCertificationTable />
     )
 }

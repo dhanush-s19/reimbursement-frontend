@@ -6,16 +6,20 @@ import { apiFetch } from "@/lib/api";
 import ReimbursementDetailView from "./ReimbursementDetailView";
 import Toast, { ToastType } from "../ui/Toast";
 
-
-interface ReimbursementDetailProps {
-  readonly employeeId: string;
-  readonly employeeRole: string;
+interface RejectionHistory {
+  previousStatus: string;
+  reason: string;
+  rejectedAt: string;
+  rejectedBy: string;
 }
 
 export default function ReimbursementDetail({
   employeeId,
   employeeRole
-}: ReimbursementDetailProps) {
+}: {
+  employeeId: string;
+  employeeRole: string;
+}) {
   const { id } = useParams();
   const router = useRouter();
 
@@ -24,10 +28,9 @@ export default function ReimbursementDetail({
   const [error, setError] = useState<string | null>(null);
 
   const [status, setStatus] = useState<string>("");
-  const [reason, setReason] = useState(""); 
+  const [reason, setReason] = useState("");
   const [approvedAmount, setApprovedAmount] = useState<number | "">("");
   const [allowedNextStatuses, setAllowedNextStatuses] = useState<string[]>([]);
-
   const [toast, setToast] = useState<{ message: string; type: ToastType } | null>(null);
 
   const showToast = (message: string, type: ToastType) => {
@@ -51,7 +54,7 @@ export default function ReimbursementDetail({
         }
 
         setApprovedAmount(res.reimbursement.approvedAmount ?? "");
-        setReason(res.reimbursement.reason ?? "");
+        setReason(""); // Clear reason on load so the reviewer writes a fresh one
 
       } catch (err: any) {
         setError(err.message || "Failed to load data");
@@ -103,8 +106,8 @@ export default function ReimbursementDetail({
     }
   };
 
-  if (loading) return <div>Loading...</div>;
-  if (error || !data) return <div>{error}</div>;
+  if (loading) return <div className="p-8 text-center animate-pulse">Loading reimbursement details...</div>;
+  if (error || !data) return <div className="p-8 text-rose-600">{error}</div>;
 
   return (
     <>

@@ -16,9 +16,7 @@ export default function EmployeePage() {
   const [loading, setLoading] = useState(true);
   const [department, setDepartment] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(
-    null,
-  );
+  const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(null);
   const [search, setSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
@@ -43,7 +41,6 @@ export default function EmployeePage() {
       });
 
       if (search) params.set("name", search);
-
       if (department && department !== "") {
         params.set("department", department);
       }
@@ -81,7 +78,10 @@ export default function EmployeePage() {
     try {
       const method = selectedEmployee ? "PUT" : "POST";
       const url = selectedEmployee ? `/api/users/${employee.id}` : "/api/users";
-
+      if (!employee.department) {
+        showToast("Please select a department", "error");
+        return;
+      }
       await apiFetch(url, {
         method,
         body: JSON.stringify(employee),
@@ -92,7 +92,7 @@ export default function EmployeePage() {
       setSelectedEmployee(null);
       showToast(
         `Employee ${selectedEmployee ? "updated" : "created"} successfully`,
-        "success",
+        "success"
       );
     } catch (error) {
       showToast("Error saving employee data", "error");
@@ -148,7 +148,6 @@ export default function EmployeePage() {
           >
             <Pencil size={18} />
           </button>
-
           <button
             onClick={() => {
               if (confirm("Are you sure you want to delete this employee?")) {
@@ -165,7 +164,7 @@ export default function EmployeePage() {
   ];
 
   return (
-    <div className="flex flex-col min-h-screen w-full bg-gray-50 overflow-x-hidden">
+    <div className="flex flex-col h-screen w-full bg-white overflow-hidden">
       {toast && (
         <Toast
           message={toast.message}
@@ -174,36 +173,38 @@ export default function EmployeePage() {
         />
       )}
 
-      <div className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-20 py-1">
-        <Header
-          title="Employees"
-          role={department}
-          onDepartmentChange={handleDepartmentChange}
-          search={search}
-          onSearchChange={handleSearchChange}
-          options={[
-            { label: "All Departments", value: "" },
-            { label: "HR", value: "HR" },
-            { label: "Development", value: "DEVELOPMENT" },
-            { label: "QA", value: "QA" },
-            { label: "Business Analyst", value: "BA" },
-            { label: "Finance", value: "FINANCE" },
-            { label: "Marketing", value: "DIGITAL_MARKETING" },
-            { label: "UI/UX", value: "UI_UX" },
-          ]}
-          actions={
-            <EmployeeActions
-              onAdd={() => {
-                setSelectedEmployee(null);
-                setIsModalOpen(true);
-              }}
-            />
-          }
-        />
+      <div className="flex-none bg-white border-b border-gray-200 z-20 py-2 flex items-center">
+        <div className="w-full px-6">
+          <Header
+            title="Employees"
+            role={department}
+            onDepartmentChange={handleDepartmentChange}
+            search={search}
+            onSearchChange={handleSearchChange}
+            options={[
+              { label: "All Departments", value: "" },
+              { label: "HR", value: "HR" },
+              { label: "Development", value: "DEVELOPMENT" },
+              { label: "QA", value: "QA" },
+              { label: "Business Analyst", value: "BA" },
+              { label: "Finance", value: "FINANCE" },
+              { label: "Marketing", value: "DIGITAL_MARKETING" },
+              { label: "UI/UX", value: "UI_UX" },
+            ]}
+            actions={
+              <EmployeeActions
+                onAdd={() => {
+                  setSelectedEmployee(null);
+                  setIsModalOpen(true);
+                }}
+              />
+            }
+          />
+        </div>
       </div>
 
-      <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 pb-24">
-        <div className="max-w-7xl mx-auto bg-white rounded-xl shadow-sm border border-gray-200">
+      <main className="flex-1 overflow-auto bg-white">
+        <div className="w-full">
           <Table
             data={employees}
             columns={columns}
@@ -213,8 +214,8 @@ export default function EmployeePage() {
         </div>
       </main>
 
-      <footer className="bg-white/90 backdrop-blur-sm border-t border-gray-200 py-3 px-6 z-30">
-        <div className="max-w-7xl mx-auto flex justify-center">
+      <footer className="flex-none bg-white border-t border-gray-200 py-3 px-6 z-30">
+        <div className="flex justify-center">
           <Pagination
             currentPage={currentPage}
             totalPages={totalPages}

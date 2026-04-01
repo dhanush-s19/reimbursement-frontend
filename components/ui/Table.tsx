@@ -24,7 +24,7 @@ export default function Table<T>({
 
   const renderContent = () => {
     if (loading) {
-      return Array.from({ length: 5 }).map((_, i) => (
+      return Array.from({ length: 10 }).map((_, i) => (
         <tr key={`loading-${i}`} className="animate-pulse">
           {columns.map((_, j) => (
             <td key={`cell-${j}`} className="px-6 py-4">
@@ -71,11 +71,10 @@ export default function Table<T>({
 
   return (
     <div className="w-full">
-      <div className="relative overflow-hidden bg-white border border-gray-200 shadow-sm rounded-xl">
-        {/* Scroll Container */}
+      <div className="relative overflow-hidden bg-white border-none rounded-none">
         <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-gray-200">
           <table className="w-full text-left border-collapse">
-            <thead className="bg-gray-50/80 backdrop-blur-sm sticky top-0 border-b border-gray-200">
+            <thead className="bg-gray-50/80 backdrop-blur-sm sticky top-0 border-b border-gray-200 z-10">
               <tr>
                 {columns.map((col, i) => (
                   <th

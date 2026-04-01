@@ -18,10 +18,12 @@ export default function CertificationTable() {
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const pageSize = 10;
+
   const [toast, setToast] = useState<{
     message: string;
     type: ToastType;
   } | null>(null);
+
   const showToast = (message: string, type: ToastType) => {
     setToast({ message, type });
   };
@@ -90,7 +92,7 @@ export default function CertificationTable() {
 
   const handleAdded = () => {
     setShowAddModal(false);
-    setCurrentPage(0);
+    setCurrentPage(0); // Reset to first page to see new entry
     fetchCertifications();
     showToast("Certification added successfully", "success");
   };
@@ -122,7 +124,9 @@ export default function CertificationTable() {
       header: "Roles",
       render: (cert: Certification) => (
         <div className="max-w-[200px] text-sm text-gray-600">
-          {cert.recommendedRoles.join(", ")}
+          {cert.recommendedRoles?.length > 0 
+            ? cert.recommendedRoles.join(", ") 
+            : "No roles assigned"}
         </div>
       ),
     },
@@ -148,7 +152,7 @@ export default function CertificationTable() {
             variant="outline"
             disabled={updatingId === cert.id}
             onClick={() => toggleStatus(cert)}
-            className="hover:bg-gray px-3 py-1 text-xs"
+            className="hover:bg-gray-50 px-3 py-1 text-xs"
           >
             {updatingId === cert.id ? "..." : "Status"}
           </Button>
@@ -157,7 +161,7 @@ export default function CertificationTable() {
             variant="outline"
             disabled={deletingId === cert.id}
             onClick={() => deleteCertification(cert)}
-            className="bg-red text-red-700 hover:bg-red-100 px-3 py-1 text-xs"
+            className="text-red-600 border-red-200 hover:bg-red-50 px-3 py-1 text-xs"
           >
             {deletingId === cert.id ? "..." : "Delete"}
           </Button>
@@ -177,54 +181,42 @@ export default function CertificationTable() {
           />
         )}
 
+        {/* Header Section */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
           <div>
             <h1 className="text-2xl font-bold text-gray-900">Certifications</h1>
             <p className="text-sm text-gray-500">
-              Manage and track your professional certifications
+              Manage and track professional certifications
             </p>
           </div>
           <Button
             variant="secondary"
             onClick={() => setShowAddModal(true)}
-            className="w-full sm:w-auto text-white shadow-sm transition-all"
+            className="w-full sm:w-auto text-white shadow-sm"
           >
             + Add New
           </Button>
         </div>
 
+        {/* Table Container */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-          <div className="overflow-x-auto">
-            <Table
-              data={certifications}
-              columns={columns}
-              loading={loading}
-              emptyMessage="No certifications found"
-            />
-          </div>
+          <Table
+            data={certifications}
+            columns={columns}
+            loading={loading}
+            emptyMessage="No certifications found"
+          />
         </div>
 
-        {showAddModal && (
-          <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center bg-black/50 backdrop-blur-sm p-0 sm:p-4">
-            <div className="relative w-full max-w-lg bg-white rounded-t-2xl sm:rounded-xl shadow-2xl p-6 overflow-y-auto max-h-[90vh]">
-              <Button
-                variant="outline"
-                onClick={() => setShowAddModal(false)}
-                className="absolute top-4 right-4 h-8 w-8 flex items-center justify-center rounded-full text-gray-400"
-              >
-                <span>&times;</span>
-              </Button>
-              <div className="mt-2">
-                <h2 className="text-xl font-bold mb-4 text-gray-900">
-                  Add Certification
-                </h2>
-                <AddCertificationForm onAdded={handleAdded} />
-              </div>
-            </div>
-          </div>
-        )}
+        {/* Add Certification Form (Modal handled internally by ModalForm) */}
+        <AddCertificationForm
+          isOpen={showAddModal}
+          onClose={() => setShowAddModal(false)}
+          onAdded={handleAdded}
+        />
       </main>
 
+      {/* Pagination Footer */}
       <footer className="fixed bottom-0 left-0 lg:left-64 right-0 bg-white/80 backdrop-blur-md border-t border-gray-200 py-4 z-50">
         <div className="flex justify-center items-center">
           <Pagination

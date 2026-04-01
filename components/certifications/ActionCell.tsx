@@ -13,7 +13,7 @@ const ActionCell = ({ row, onSelect }: ActionCellProps) => {
       <Button
         size="sm"
         variant="secondary"
-        className="text-[11px] h-8 px-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white border-none"
+        className="text-[11px] h-8 px-3 rounded-xl  hover:bg-gray-700 text-white border-none"
         onClick={(e) => {
           e.stopPropagation();
           onSelect(row);

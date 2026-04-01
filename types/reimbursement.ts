@@ -31,4 +31,7 @@ export interface Reimbursement {
   type: "NORMAL" | "CERTIFICATE" | "TEAM_EVENTS";
   requiresHrApproval?: boolean;
   approvedAmount?: number;
+  
+  resubmitted?:boolean
+  submissionCount?:number
 }

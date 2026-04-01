@@ -4,23 +4,30 @@ const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 export const apiFetch = async (endpoint: string, options: RequestInit = {}) => {
   const token = await getAccessToken();
+
+  const headers = new Headers();
+
+  if (token) {
+    headers.set("Authorization", `Bearer ${token}`);
+  }
+
+
+  if (!(options.body instanceof FormData)) {
+    headers.set("Content-Type", "application/json");
+  }
+
   const res = await fetch(`${BASE_URL}${endpoint}`, {
     ...options,
-    headers: {
-      Authorization: `Bearer ${token}`,
-      ...(options.body instanceof FormData
-        ? {}
-        : { "Content-Type": "application/json" }),
-      ...options.headers,
-    },
+    headers,
   });
 
   if (!res.ok) {
     const errorData = await res.json().catch(() => ({}));
-    throw new Error(errorData.message || "API request failed");
+    throw new Error(errorData.message || `API request failed: ${res.status}`);
   }
 
   if (res.status === 204) return null;
+
   const text = await res.text();
   return text ? JSON.parse(text) : null;
 };

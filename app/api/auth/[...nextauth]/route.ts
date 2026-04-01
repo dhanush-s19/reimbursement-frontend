@@ -1,32 +1,6 @@
-import NextAuth, {
-  AuthOptions,
-  Session,
-  User as NextAuthUser,
-} from "next-auth";
+import NextAuth, { AuthOptions, Session, User as NextAuthUser } from "next-auth";
 import { JWT } from "next-auth/jwt";
 import CredentialsProvider from "next-auth/providers/credentials";
-
-interface MyUser extends NextAuthUser {
-  token?: string;
-  role?: string;
-}
-
-interface MyJWT extends JWT {
-  accessToken?: string;
-  role?: string;
-  sub?: string;
-}
-
-interface MySession extends Session {
-  accessToken?: string;
-  user: {
-    id: string;
-    name?: string | null;
-    email?: string | null;
-    role?: string | null;
-    employeeId: string | null;
-  };
-}
 
 export const authOptions: AuthOptions = {
   providers: [
@@ -38,21 +12,12 @@ export const authOptions: AuthOptions = {
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) return null;
-
-        const res = await fetch(
-          `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/login`,
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              email: credentials.email,
-              password: credentials.password,
-            }),
-          },
-        );
-
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/login`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(credentials),
+        });
         const data = await res.json();
-
         if (!res.ok || !data.token) return null;
 
         return {
@@ -62,39 +27,39 @@ export const authOptions: AuthOptions = {
           token: data.token,
           role: data.role,
           employeeId: data.employeeId,
-        } as MyUser;
+        };
       },
     }),
   ],
-  session: {
-    strategy: "jwt",
-  },
-  secret: process.env.NEXTAUTH_SECRET,
+  session: { strategy: "jwt" },
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user, trigger, session }) {
+
       if (user) {
-        token.accessToken = user.token;
+        token.accessToken = (user as any).token;
         token.id = user.id;
-        token.role = user.role;
-        token.employeeId = user.employeeId;
+        token.role = (user as any).role;
+        token.employeeId = (user as any).employeeId;
+        token.name = user.name;
+      }
+
+      if (trigger === "update" && session?.name) {
+        token.name = session.name;
       }
       return token;
     },
-
     async session({ session, token }) {
       if (session.user) {
-        session.accessToken = token.accessToken as string;
-        session.user.id = token.sub as string;
-        session.user.role = token.role as string;
-        session.user.employeeId = token.employeeId as string;
+        (session as any).accessToken = token.accessToken;
+        session.user.id = token.id as string;
+        (session.user as any).role = token.role;
+        (session.user as any).employeeId = token.employeeId;
+        session.user.name = token.name; 
       }
-
       return session;
     },
   },
-  pages: {
-    signIn: "/auth/signin",
-  },
+  pages: { signIn: "/auth/signin" },
 };
 
 const handler = NextAuth(authOptions);

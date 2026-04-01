@@ -27,12 +27,13 @@ export const menus = {
   ],
 
   MANAGER: [
-    { name: "Employee", href: "/manager" },
+    // { name: "Employee", href: "/manager" },
     {
       name: "Request Reimbursement",
       href: "/reimbursement-form",
     },
     { name: "Reimbursement Status", href: "/reimbursement" },
+    { name: "Manager Pending Request", href: "/manager" },
     { name: "Certification", href: "/certification" },
   ],
 };

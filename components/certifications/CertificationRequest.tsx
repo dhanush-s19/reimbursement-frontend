@@ -4,7 +4,8 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { useState } from "react";
 import { apiFetch } from "@/lib/api";
 import Button from "@/components/ui/Button";
-import { Send, ArrowLeft, Info } from "lucide-react";
+import { Send, ArrowLeft, Info, FileText } from "lucide-react";
+import { FormField, inputClasses } from "../ui/Form";
 
 interface EnrollmentProps {
   name: string;
@@ -15,11 +16,14 @@ export function EnrollmentFormContent({ name, id }: Readonly<EnrollmentProps>) {
   const searchParams = useSearchParams();
   const router = useRouter();
   const certName = searchParams.get("name") || "Certification";
+  
   const [description, setDescription] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+
   const handleSubmit = async (e: React.SubmitEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
+
     const formData = new FormData();
     formData.append("title", certName);
     formData.append("amount", "0");
@@ -27,19 +31,19 @@ export function EnrollmentFormContent({ name, id }: Readonly<EnrollmentProps>) {
     formData.append("type", "CERTIFICATE");
     formData.append("submittedBy", id);
     formData.append("name", name);
-    try {
-      const url = "/api/reimbursements/submit";
+    formData.append("noInvoice", "true"); 
 
-      await apiFetch(url, {
+    try {
+      await apiFetch("/api/reimbursements/submit", {
         method: "POST",
         body: formData,
       });
 
       alert("Enrollment request sent to HR for approval!");
-      router.push("/my-reimbursements");
+      router.push("/reimbursement");
     } catch (err) {
       console.error(err);
-      alert("Failed to submit request. Please try again.");
+      alert("Failed to submit request.");
     } finally {
       setIsSubmitting(false);
     }
@@ -49,65 +53,64 @@ export function EnrollmentFormContent({ name, id }: Readonly<EnrollmentProps>) {
     <div className="max-w-xl mx-auto py-12 px-4">
       <button
         onClick={() => router.back()}
-        className="flex items-center text-gray-500 hover:text-gray-800 mb-6 transition-colors"
+        className="flex items-center text-gray-500 hover:text-gray-800 mb-6 transition-colors group"
       >
-        <ArrowLeft size={16} className="mr-2" /> Back to Certifications
+        <ArrowLeft size={16} className="mr-2 group-hover:-translate-x-1 transition-transform" /> 
+        Back to Certifications
       </button>
 
       <div className="mb-8">
         <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight mb-2">
           Request Enrollment
         </h1>
-        <p className="text-gray-600">
-          Requesting as:{" "}
-          <span className="font-semibold text-gray-800">
-            {name} ({id})
-          </span>
-        </p>
-        <p className="text-gray-600 mt-1">
-          For certification:{" "}
-          <span className="font-bold text-black">{certName}</span>
-        </p>
+        <div className="flex flex-col gap-1 text-sm text-gray-600">
+          <p>Requesting as: <span className="font-semibold text-gray-800">{name}</span></p>
+          <p>Certification: <span className="font-bold text-black">{certName}</span></p>
+        </div>
       </div>
 
-      <div className="bg-green-50 border border-green-100 rounded-xl p-4 mb-6 flex gap-3">
-        <Info className="text-green-500 shrink-0" size={20} />
-        <p className="text-sm text-green-800 font-medium leading-relaxed">
-          HR approval is required before you pay for this course. Once approved,
-          you can later upload your invoice for payout.
+      <div className="bg-blue-50 border border-blue-100 rounded-2xl p-4 mb-8 flex gap-3">
+        <Info className="text-blue-500 shrink-0" size={20} />
+        <p className="text-sm text-blue-800 leading-relaxed">
+          HR approval is required <strong>before</strong> payment. You will upload your invoice for reimbursement after completing the course.
         </p>
       </div>
 
       <form
         onSubmit={handleSubmit}
-        className="space-y-6 bg-white p-8 rounded-[2rem] shadow-xl shadow-gray-200/50 border border-gray-100"
+        className="bg-white rounded-3xl shadow-2xl border border-gray-100 overflow-hidden"
       >
-        <div>
-          <label
-            htmlFor="text"
-            className="block text-sm font-semibold text-gray-700 mb-2 ml-1"
-          >
-            Statement of Purpose
-          </label>
-          <textarea
-            required
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            placeholder="How will this certification help your performance or the team?"
-            className="w-full p-4 bg-gray-50 border-transparent rounded-2xl focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all outline-none text-gray-900 h-40 resize-none shadow-inner"
-          />
+        <div className="px-6 py-4 border-b bg-gray-50/50">
+          <div className="flex items-center gap-2">
+            <FileText size={18} className="text-gray-400" />
+            <h2 className="font-bold text-gray-800">Statement of Purpose</h2>
+          </div>
         </div>
 
-        <div className="pt-2">
+        <div className="p-6">
+          <FormField 
+            label="Why do you want to take this certification?" 
+            required
+          >
+            <textarea
+              required
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              placeholder="Explain how this helps your performance or the team..."
+              className={`${inputClasses(false)} h-44 resize-none`}
+            />
+          </FormField>
+        </div>
+
+        <div className="px-6 py-4 bg-gray-50 border-t flex justify-end">
           <Button
-            fullWidth
-            size="lg"
+            variant="secondary"
+            type="submit"
             isLoading={isSubmitting}
             rightIcon={!isSubmitting && <Send size={18} />}
-            className="rounded-2xl py-4 font-bold shadow-lg"
-            variant="secondary"
+            className="px-8 min-w-[200px] rounded-xl"
           >
-            Submit Enrollment Request
+            Submit Request
           </Button>
         </div>
       </form>

@@ -1,9 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { X, CheckCircle2, FileText, IndianRupee } from "lucide-react";
+import { X, Send } from "lucide-react";
 import Button from "../ui/Button";
 import { Reimbursement } from "@/types/reimbursement";
+import FileUpload from "../FileUpload";
 
 interface CompletionModalProps {
   reimbursement: Reimbursement;
@@ -18,148 +19,144 @@ export default function CompletionModal({
   onClose,
   onConfirm,
 }: Readonly<CompletionModalProps>) {
-  const [certFile, setCertFile] = useState<File | null>(null);
-  const [invoiceFile, setInvoiceFile] = useState<File | null>(null);
   const [amount, setAmount] = useState<string>("");
-  const [isUploading, setIsUploading] = useState(false);
+  const [certFiles, setCertFiles] = useState<File[]>([]);
+  const [invoiceFiles, setInvoiceFiles] = useState<File[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   if (!isOpen) return null;
 
-  const handleSubmit = async () => {
-    if (!certFile || !invoiceFile || !amount || parseFloat(amount) <= 0) {
-      return alert(
-        "Please enter the final amount and upload both required documents.",
-      );
+  const inputClasses = (hasError: boolean) => `
+    w-full border rounded-lg px-3 py-2.5 outline-none transition-all text-gray-900
+    ${hasError 
+      ? "border-red-500 focus:ring-red-100" 
+      : "border-gray-300 focus:ring-[#009A74]/20 focus:border-[#009A74]"}
+  `;
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+
+    const numericAmount = parseFloat(amount);
+    if (isNaN(numericAmount) || numericAmount <= 0) {
+      setError("Please enter a valid final amount.");
+      return;
     }
 
-    setIsUploading(true);
+    if (certFiles.length === 0 || invoiceFiles.length === 0) {
+      setError("Both the Completion Certificate and Final Invoice are required.");
+      return;
+    }
+
+    setIsLoading(true);
     const formData = new FormData();
-    formData.append("files", certFile);
-    formData.append("files", invoiceFile);
     formData.append("finalAmount", amount);
+    certFiles.forEach((file) => formData.append("certificate", file));
+    invoiceFiles.forEach((file) => formData.append("files", file)); 
 
     try {
       await onConfirm(formData);
       onClose();
     } catch (err) {
-      console.error("Upload error:", err);
-      alert("Upload failed. Please try again.");
+      setError("Upload failed. Please try again.");
     } finally {
-      setIsUploading(false);
+      setIsLoading(false);
     }
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900/60 backdrop-blur-sm">
-      <div className="bg-white rounded-[2.5rem] w-full max-w-md p-8 shadow-2xl space-y-6 relative border border-gray-100">
-        <button
-          onClick={onClose}
-          className="absolute top-6 right-6 p-2 hover:bg-gray-100 rounded-full transition-colors text-gray-400"
-        >
-          <X size={20} />
-        </button>
-
-        <div className="space-y-1">
-          <h3 className="text-2xl font-black text-gray-900 leading-tight">
-            Claim Payout
-          </h3>
-          <p className="text-gray-500 font-medium truncate">
-            {reimbursement.title}
-          </p>
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900/60 backdrop-blur-sm animate-in fade-in duration-200">
+      {/* Changed div to form and added onSubmit */}
+      <form 
+        onSubmit={handleSubmit}
+        className="bg-white rounded-3xl w-full max-w-lg shadow-2xl flex flex-col overflow-hidden border border-gray-100 animate-in zoom-in-95 duration-200 max-h-[95vh]"
+      >
+        
+        {/* Header Section */}
+        <div className="px-6 py-4 border-b flex justify-between items-center bg-white">
+          <div>
+            <h2 className="text-xl font-bold text-gray-800">Claim Payout</h2>
+            <p className="text-sm text-gray-500 font-medium">
+              Settling: <span className="text-gray-700">{reimbursement.title}</span>
+            </p>
+          </div>
+          <button
+            type="button" // Explicitly button to prevent form submission
+            onClick={onClose}
+            className="p-2 hover:bg-gray-100 rounded-full transition-colors text-gray-400"
+          >
+            <X size={20} />
+          </button>
         </div>
 
-        <div className="space-y-5">
-          <div className="space-y-2">
-            <label
-              htmlFor="invoice"
-              className="text-[10px] font-bold uppercase tracking-[0.15em] text-gray-400 ml-1"
-            >
-              Invoice Amount (₹)
-            </label>
-            <div className="relative group">
-              <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-blue-600 transition-colors">
-                <IndianRupee size={16} />
-              </div>
+        {/* Body Section */}
+        <div className="flex-1 overflow-y-auto p-6 space-y-5">
+          <div className="flex flex-col gap-1.5">
+            <label className="text-sm font-medium text-gray-700">Final Invoice Amount</label>
+            <div className="relative">
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 font-medium">₹</span>
               <input
                 type="number"
+                step="0.01"
                 value={amount}
-                onChange={(e) => setAmount(e.target.value)}
-                className="w-full pl-11 pr-4 py-3.5 bg-gray-50 border-2 border-transparent rounded-2xl focus:bg-white focus:border-blue-500 transition-all outline-none font-bold text-gray-900 shadow-inner"
-                placeholder="Enter actual amount paid"
+                onChange={(e) => {
+                  setAmount(e.target.value);
+                  if (error) setError(null);
+                }}
+                placeholder="0.00"
+                className={`${inputClasses(!!error)} pl-7 font-semibold`}
+                required
               />
             </div>
           </div>
 
           <div className="space-y-4">
             <div className="space-y-2">
-              <label
-                htmlFor="upload"
-                className="text-[10px] font-bold uppercase tracking-[0.15em] text-gray-400 ml-1"
-              >
-                1. Completion Certificate
-              </label>
-              <div
-                className={`relative border-2 border-dashed rounded-2xl p-4 transition-all ${certFile ? "border-emerald-200 bg-emerald-50" : "border-gray-200 hover:border-blue-300"}`}
-              >
-                <input
-                  type="file"
-                  className="absolute inset-0 opacity-0 cursor-pointer"
-                  onChange={(e) => setCertFile(e.target.files?.[0] || null)}
-                />
-                <div className="flex items-center gap-3">
-                  <div
-                    className={`p-2 rounded-xl ${certFile ? "bg-emerald-500 text-white" : "bg-white text-gray-400 border border-gray-100"}`}
-                  >
-                    <CheckCircle2 size={18} />
-                  </div>
-                  <span className="text-sm font-semibold truncate text-gray-700">
-                    {certFile ? certFile.name : "Upload Certificate"}
-                  </span>
-                </div>
-              </div>
+              <label className="text-sm font-medium text-gray-700">1. Completion Certificate</label>
+              <FileUpload
+                files={certFiles}
+                onFilesChange={setCertFiles}
+                label="Upload Certificate"
+                maxSizeMB={5}
+              />
             </div>
 
             <div className="space-y-2">
-              <label
-                htmlFor="upload"
-                className="text-[10px] font-bold uppercase tracking-[0.15em] text-gray-400 ml-1"
-              >
-                2. Final Invoice
-              </label>
-              <div
-                className={`relative border-2 border-dashed rounded-2xl p-4 transition-all ${invoiceFile ? "border-emerald-200 bg-emerald-50" : "border-gray-200 hover:border-blue-300"}`}
-              >
-                <input
-                  type="file"
-                  className="absolute inset-0 opacity-0 cursor-pointer"
-                  onChange={(e) => setInvoiceFile(e.target.files?.[0] || null)}
-                />
-                <div className="flex items-center gap-3">
-                  <div
-                    className={`p-2 rounded-xl ${invoiceFile ? "bg-emerald-500 text-white" : "bg-white text-gray-400 border border-gray-100"}`}
-                  >
-                    <FileText size={18} />
-                  </div>
-                  <span className="text-sm font-semibold truncate text-gray-700">
-                    {invoiceFile ? invoiceFile.name : "Upload Invoice"}
-                  </span>
-                </div>
-              </div>
+              <label className="text-sm font-medium text-gray-700">2. Final Invoice / Receipt</label>
+              <FileUpload
+                files={invoiceFiles}
+                onFilesChange={setInvoiceFiles}
+                label="Upload Final Invoices"
+                maxSizeMB={5}
+              />
             </div>
           </div>
+
+          {error && (
+            <div className="p-3 bg-red-50 border border-red-100 rounded-lg text-red-600 text-xs font-medium animate-in slide-in-from-top-1">
+              {error}
+            </div>
+          )}
         </div>
 
-        <Button
-          variant="primary"
-          fullWidth
-          className="py-4 rounded-2xl font-bold shadow-lg shadow-blue-200"
-          isLoading={isUploading}
-          onClick={handleSubmit}
-          disabled={!certFile || !invoiceFile || !amount}
-        >
-          Submit for Payout
-        </Button>
-      </div>
+        {/* Footer Section */}
+        <div className="px-6 py-4 bg-gray-50 border-t flex flex-col-reverse sm:flex-row justify-end gap-3">
+          <Button variant="outline" type="button" onClick={onClose} className="px-6">
+            Cancel
+          </Button>
+          <Button
+            variant="secondary"
+            type="submit" 
+            isLoading={isLoading}
+            rightIcon={!isLoading && <Send size={18} />}
+            disabled={certFiles.length === 0 || invoiceFiles.length === 0 || !amount || isLoading}
+            className="px-8 min-w-[160px]"
+          >
+            {isLoading ? "Processing..." : "Submit Payout"}
+          </Button>
+        </div>
+      </form>
     </div>
   );
 }

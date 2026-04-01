@@ -9,7 +9,6 @@ interface Props {
 
 function EmployeeActions({ onAdd }: Readonly<Props>) {
   const handleAdd = () => {
-    console.log("Add Employee button clicked");
     onAdd();
   };
 

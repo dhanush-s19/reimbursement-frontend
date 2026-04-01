@@ -1,13 +1,12 @@
 'use client';
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { signOut } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react"; 
 import { Menu, X, LogOut, ChevronRight } from "lucide-react";
 import Button from "./Button";
 import ProfileModal from "../ProfileModal";
-
 
 type MenuItem = {
   name: string;
@@ -17,14 +16,13 @@ type MenuItem = {
 type SidebarProps = Readonly<{
   userId?: string;
   name?: string;
-  email?: string;
   role?: string;
   menuItems: MenuItem[];
 }>;
 
 export default function Sidebar({
   userId,
-  name = "User",
+  name: initialName = "User",
   role = "USER",
   menuItems
 }: SidebarProps) {
@@ -32,7 +30,10 @@ export default function Sidebar({
   const [isOpen, setIsOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
 
-  const badgeText = role?.[0]?.toUpperCase() || "?";
+  const { data: session } = useSession();
+  const currentName = session?.user?.name || initialName;
+  const badgeText = currentName?.[0]?.toUpperCase() || "?";
+
   const toggleSidebar = () => setIsOpen(!isOpen);
 
   return (
@@ -40,7 +41,7 @@ export default function Sidebar({
       <ProfileModal
         isOpen={isProfileOpen}
         onClose={() => setIsProfileOpen(false)}
-        initialName={name}
+        initialName={currentName} 
         userId={userId}
       />
 
@@ -55,11 +56,10 @@ export default function Sidebar({
         </Button>
       </div>
 
+      {/* Overlay */}
       {isOpen && (
-        <Button
-          type="button"
-          aria-label="Close sidebar"
-          className="fixed inset-0 bg-black/30 backdrop-blur-sm z-40 lg:hidden cursor-default"
+        <div
+          className="fixed inset-0 bg-black/30 backdrop-blur-sm z-40 lg:hidden"
           onClick={toggleSidebar}
         />
       )}
@@ -71,7 +71,7 @@ export default function Sidebar({
         lg:translate-x-0
       `}>
 
-
+        {/* Profile Section */}
         <Button
           variant="secondary"
           onClick={() => setIsProfileOpen(true)}
@@ -83,16 +83,18 @@ export default function Sidebar({
             </div>
 
             <div className="overflow-hidden pr-4">
-              <p className="text-[10px] uppercase tracking-wider font-bold text-gray-400 group-hover:text-gray=600 transition-colors">
+              <p className="text-[10px] uppercase tracking-wider font-bold text-gray-400 group-hover:text-gray-600 transition-colors">
                 Profile Settings
               </p>
-              <p className="font-bold text-gray-900 truncate leading-tight">{name}</p>
+              <p className="font-bold text-gray-900 truncate leading-tight">
+                {currentName}
+              </p>
             </div>
             <ChevronRight size={15} className="absolute right-4 text-gray-300 group-hover:text-black group-hover:translate-x-1 transition-all" />
           </div>
         </Button>
 
-
+        {/* Navigation */}
         <nav className="flex-1 px-3 py-6 space-y-1 overflow-y-auto">
           {menuItems.map((item) => {
             const isActive = pathname === item.href;
@@ -115,7 +117,7 @@ export default function Sidebar({
           })}
         </nav>
 
-
+        {/* Logout Section */}
         <div className="p-4 border-t border-gray-100 bg-gray-50/50">
           <Button
             variant="secondary"

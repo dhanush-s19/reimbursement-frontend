@@ -7,8 +7,8 @@ import Table from "../ui/Table";
 import { useRouter } from "next/navigation";
 import { format } from "date-fns";
 import Button from "../ui/Button";
+import { ChevronUp, ChevronDown, ListFilter, ReceiptText, RotateCcw } from "lucide-react";
 import { Pagination } from "../Pagination";
-import { ChevronUp, ChevronDown, ListFilter } from "lucide-react";
 
 type Props = Readonly<{
   role: string;
@@ -37,21 +37,27 @@ export default function ReimbursementList({ role }: Props) {
   const [page, setPage] = useState(0);
   const [size] = useState(10);
   const [totalPages, setTotalPages] = useState(0);
+  const [totalElements, setTotalElements] = useState(0);
   const [sortBy, setSortBy] = useState("createdAt");
   const [direction, setDirection] = useState<"asc" | "desc">("desc");
   const router = useRouter();
 
   const fetchReimbursements = useCallback(async () => {
-  setLoading(true);
-  setError(null);
-  const res = await apiFetch(
-    `/api/reimbursements/type/${TYPE_MAP[view]}?page=${page}&size=${size}&sortBy=${sortBy}&direction=${direction}`
-  );
-
-  setReimbursements(res?.content ?? []);
-  setTotalPages(res?.totalPages ?? 0);
-  setLoading(false);
-}, [view, page, size, sortBy, direction]);
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await apiFetch(
+        `/api/reimbursements/type/${TYPE_MAP[view]}?page=${page}&size=${size}&sortBy=${sortBy}&direction=${direction}`
+      );
+      setReimbursements(res?.content ?? []);
+      setTotalPages(res?.totalPages ?? 0);
+      setTotalElements(res?.totalElements ?? 0);
+    } catch (err) {
+      setError("Failed to load reimbursements. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  }, [view, page, size, sortBy, direction]);
 
   useEffect(() => {
     fetchReimbursements();
@@ -60,6 +66,16 @@ export default function ReimbursementList({ role }: Props) {
   const handleRowClick = (r: Reimbursement) => {
     if (role === "ACCOUNTANT") {
       router.push(`/reimbursement-request/${r.id}`);
+    }
+  };
+
+  const handleSort = (field: string) => {
+    setPage(0); 
+    if (sortBy === field) {
+      setDirection(direction === "asc" ? "desc" : "asc");
+    } else {
+      setSortBy(field);
+      setDirection("desc");
     }
   };
 
@@ -99,13 +115,20 @@ export default function ReimbursementList({ role }: Props) {
     {
       header: "Status",
       render: (r: Reimbursement) => (
-        <span
-          className={`px-2.5 py-1 rounded-full text-[11px] font-bold border uppercase tracking-wide ${
-            statusStyles[r.status] || "bg-gray-50 text-gray-600 border-gray-200"
-          }`}
-        >
-          {r.status.replaceAll("_", " ")}
-        </span>
+        <div className="flex flex-col items-start gap-1.5">
+          <span
+            className={`px-2.5 py-1 rounded-full text-[11px] font-bold border uppercase tracking-wide ${statusStyles[r.status] || "bg-gray-50 text-gray-600 border-gray-200"
+              }`}
+          >
+            {r.status.replaceAll("_", " ")}
+          </span>
+
+          {r.resubmitted && (
+            <span className="flex items-center gap-1 px-1.5 py-0.5 bg-amber-100 text-amber-700 border border-amber-200 rounded text-[9px] font-extrabold uppercase tracking-tighter">
+              <RotateCcw size={10} /> Resubmitted v{r.submissionCount}
+            </span>
+          )}
+        </div>
       ),
     },
     {
@@ -129,66 +152,58 @@ export default function ReimbursementList({ role }: Props) {
     },
   ];
 
-  const handleSort = (field: string) => {
-    if (sortBy === field) {
-      setDirection(direction === "asc" ? "desc" : "asc");
-    } else {
-      setSortBy(field);
-      setDirection("desc");
-    }
-  };
-
   return (
     <div className="flex flex-col min-h-screen bg-[#F9FAFB]">
       <main className="flex-grow py-8 px-4 sm:px-6 lg:px-8 pb-32">
         <div className="max-w-6xl mx-auto">
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
+          <header className="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4">
             <div>
-              <h2 className="text-3xl font-extrabold text-gray-900 tracking-tight">Reimbursements</h2>
-              <p className="text-gray-500 mt-1">Review and manage employee expense claims</p>
+              <div className="flex items-center gap-2 mb-1">
+                <ReceiptText className="text-black-600" size={28} />
+                <h2 className="text-3xl font-extrabold text-gray-900 tracking-tight">Reimbursements</h2>
+              </div>
+              <p className="text-gray-500 text-sm">Review and manage employee expense claims</p>
             </div>
-
-            <div className="inline-flex p-1 bg-gray-200/60 backdrop-blur-sm rounded-xl border border-gray-200">
-              {(["normal", "certificate", "team"] as const).map((v) => (
-                <button
-                  key={v}
-                  onClick={() => {
-                    setView(v);
-                    setPage(0);
-                  }}
-                  className={`px-5 py-2 text-sm font-semibold transition-all duration-200 rounded-lg capitalize ${
-                    view === v ? "bg-white text-black shadow-sm" : "text-gray-500 hover:text-gray-800"
-                  }`}
-                >
-                  {v}
-                </button>
-              ))}
-            </div>
-          </div>
-
+          </header>
           <div className="flex flex-wrap items-center gap-3 mb-6">
             <div className="flex items-center text-gray-400 mr-2">
               <ListFilter size={18} />
               <span className="text-xs font-bold uppercase ml-2 tracking-widest">Sort By:</span>
             </div>
-
             <Button
               size="sm"
               variant={sortBy === "amount" ? "secondary" : "outline"}
-              className="rounded-full px-4"
+              className="rounded-full px-4 text-xs font-semibold"
               onClick={() => handleSort("amount")}
             >
               Amount <SortIcon field="amount" sortBy={sortBy} direction={direction} />
             </Button>
-
             <Button
               size="sm"
               variant={sortBy === "createdAt" ? "secondary" : "outline"}
-              className="rounded-full px-4"
+              className="rounded-full px-4 text-xs font-semibold"
               onClick={() => handleSort("createdAt")}
             >
-              Submission Date <SortIcon field="createdAt" sortBy={sortBy} direction={direction} />
+              Date <SortIcon field="createdAt" sortBy={sortBy} direction={direction} />
             </Button>
+
+            <div className="ml-auto flex items-center gap-1.5 p-1 bg-gray-200/50 rounded-2xl border border-gray-200">
+              {(["normal", "certificate", "team"] as const).map((v) => (
+                <Button
+                  key={v}
+                  size="sm"
+                  variant={view === v ? "secondary" : "ghost"}
+                  className={`rounded-xl px-4 capitalize text-xs font-semibold ${view === v ? "bg-white shadow-sm hover:bg-white" : "text-gray-500"
+                    }`}
+                  onClick={() => {
+                    setView(v);
+                    setPage(0);
+                  }}
+                >
+                  {v}
+                </Button>
+              ))}
+            </div>
           </div>
 
           {error && (
@@ -202,14 +217,14 @@ export default function ReimbursementList({ role }: Props) {
               data={reimbursements}
               columns={columns}
               loading={loading}
-              emptyMessage={`No ${view} claims found for this period.`}
+              emptyMessage={`No ${view} claims found.`}
               onRowClick={handleRowClick}
             />
           </div>
         </div>
       </main>
 
-      <footer className="fixed bottom-0 left-0 right-0 bg-white/80 backdrop-blur-md border-t border-gray-200 py-4 shadow-[0_-4px_20px_-5px_rgba(0,0,0,0.05)]">
+      <footer className="fixed bottom-0 left-0 right-0 bg-white/80 backdrop-blur-md border-t border-gray-200 py-4 shadow-[0_-4px_20px_-5px_rgba(0,0,0,0.05)] z-10">
         <div className="flex justify-center items-center">
           <Pagination
             currentPage={page}

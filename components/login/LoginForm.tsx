@@ -57,7 +57,7 @@ const LoginPage = () => {
         EMPLOYEE: "/reimbursement-form",
         HR: "/hr/dashboard",
         ACCOUNTANT: "/accountant",
-        MANAGER: "/manager",
+        MANAGER: "/reimbursement-form",
       };
 
       router.push(routes[userRole as string] || "/dashboard");

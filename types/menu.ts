@@ -6,7 +6,8 @@ export const menus = {
     { name: "Hr Reimbursement Request", href: "/hr/hr-reimbursement-request" },
     { name: "Reimbursement Request", href: "/reimbursement-request" },
     { name: "My Reimbursement Status", href: "/reimbursement" },
-    { name: "Certifications", href: "/hr/certifications" },
+    { name: "Certifications", href: "/certification" },
+    { name: "Certification Management", href: "/hr/certifications" },
   ],
 
   EMPLOYEE: [

@@ -11,9 +11,9 @@ export const apiFetch = async (endpoint: string, options: RequestInit = {}) => {
     headers.set("Authorization", `Bearer ${token}`);
   }
 
-
   if (!(options.body instanceof FormData)) {
     headers.set("Content-Type", "application/json");
+
   }
 
   const res = await fetch(`${BASE_URL}${endpoint}`, {

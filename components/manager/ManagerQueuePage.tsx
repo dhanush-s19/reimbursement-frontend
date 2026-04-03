@@ -113,7 +113,6 @@ export default function ManagerQueuePage({ managerId }: Readonly<ManagerQueuePro
             header: "Amount",
             render: (row: Reimbursement) => (
                 <span className="font-mono font-bold text-gray-900 whitespace-nowrap">
-                    {/* Fixed: Added nullish coalescing to prevent undefined toLocaleString error */}
                     ₹{(row?.amount ?? 0).toLocaleString("en-IN")}
                 </span>
             ),
@@ -138,7 +137,7 @@ export default function ManagerQueuePage({ managerId }: Readonly<ManagerQueuePro
                     <header className="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4">
                         <div>
                             <div className="flex items-center gap-3 mb-1">
-                                <ClipboardCheck className="text-blue-600" size={32} />
+                                <ClipboardCheck className="text-black" size={32} />
                                 <h2 className="text-3xl font-extrabold text-gray-900 tracking-tight">Approval Queue</h2>
                             </div>
                             <p className="text-gray-500 text-sm italic">Reviewing pending claims for Manager ID: {managerId}</p>

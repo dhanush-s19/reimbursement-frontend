@@ -18,20 +18,16 @@ export interface Reimbursement {
   noInvoice: boolean;
   invoiceNote?: string;
   fileUrls?: string[];
-
   submittedBy: string;
   processedById?: string;
-
   status: ReimbursementStatus;
   reason?: string;
-
   createdAt: string;
   updatedAt: string;
-
   type: "NORMAL" | "CERTIFICATE" | "TEAM_EVENTS";
   requiresHrApproval?: boolean;
   approvedAmount?: number;
-  
   resubmitted?:boolean
   submissionCount?:number
+  managerName:string
 }

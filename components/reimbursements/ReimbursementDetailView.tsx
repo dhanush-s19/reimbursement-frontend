@@ -1,7 +1,20 @@
 "use client";
 
 import React, { useState } from "react";
-import { Maximize2, FileText, IndianRupee, Clock, Tag, ChevronRight, Users, Award, RotateCcw, AlertCircle, History } from "lucide-react";
+import { 
+  Maximize2, 
+  FileText, 
+  IndianRupee, 
+  Clock, 
+  Tag, 
+  ChevronRight, 
+  Users, 
+  Award, 
+  RotateCcw, 
+  AlertCircle, 
+  History,
+  UserCheck 
+} from "lucide-react";
 import Card from "../ui/Card";
 import { ReimbursementActionCard } from "./ReimbursementActionCard";
 import Button from "../ui/Button";
@@ -66,6 +79,11 @@ export default function ReimbursementDetailView(props: Readonly<Props>) {
 
   const isTeamEvent = reimbursement.type === "TEAM_EVENTS";
   const teamCount = reimbursement.teamMemberIds?.length || 0;
+  
+  /** * Logic: Show who forwarded it only for Team Events. 
+   * This assumes the API returns 'processedByName' for the person who moved it to the current state.
+   */
+  const forwardedByName = reimbursement.managerName;
 
   return (
     <div className="max-w-6xl mx-auto min-h-screen bg-slate-50/50 p-4 lg:p-8 font-sans antialiased text-slate-900">
@@ -197,18 +215,32 @@ export default function ReimbursementDetailView(props: Readonly<Props>) {
                 </div>
 
                 {isTeamEvent && (
-                  <div className="col-span-2 pt-4 border-t border-slate-100">
-                    <p className="text-sm text-slate-500 flex items-center gap-1.5">
-                      <Users size={14} /> Team Size
-                    </p>
-                    <p className="text-sm font-bold text-slate-700">
-                      {teamCount} {teamCount === 1 ? 'Member' : 'Members'}
-                    </p>
+                  <div className="col-span-2 pt-4 border-t border-slate-100 grid grid-cols-2 gap-4">
+                    <div>
+                      <p className="text-sm text-slate-500 flex items-center gap-1.5">
+                        <Users size={14} /> Team Size
+                      </p>
+                      <p className="text-sm font-bold text-slate-700">
+                        {teamCount} {teamCount === 1 ? 'Member' : 'Members'}
+                      </p>
+                    </div>
+                    
+                    {forwardedByName && (
+                       <div className="border-l border-slate-100 pl-6">
+                        <p className="text-sm text-slate-500 flex items-center gap-1.5">
+                          <UserCheck size={14} className="text-emerald-600" /> Manager Handled
+                        </p>
+                        <p className="text-sm font-bold text-slate-700">
+                          {forwardedByName}
+                        </p>
+                       </div>
+                    )}
                   </div>
                 )}
               </div>
             </Card.Content>
           </Card>
+
           <Card>
             <Card.Content>
               <div className="flex items-center gap-2 mb-4 text-slate-900">
@@ -220,12 +252,12 @@ export default function ReimbursementDetailView(props: Readonly<Props>) {
               </p>
             
               {reimbursement.resubmitted && (
-                 <div className="mt-3 p-3 bg-amber-50/50 rounded border border-amber-100 border-dashed">
+                  <div className="mt-3 p-3 bg-amber-50/50 rounded border border-amber-100 border-dashed">
                     <p className="text-[10px] font-bold text-amber-800 uppercase tracking-tight mb-1">Resubmission Note:</p>
                     <p className="text-[11px] text-slate-500 italic leading-snug">
-                       {reimbursement.reason || "The employee resubmitted this for further review."}
+                        {reimbursement.reason || "The employee resubmitted this for further review."}
                     </p>
-                 </div>
+                  </div>
               )}
             </Card.Content>
           </Card>

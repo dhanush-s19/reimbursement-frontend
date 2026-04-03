@@ -5,7 +5,6 @@ import { useState } from "react";
 import ClaimForm, { ClaimType } from "../ClaimForm";
 import Toast, { ToastType } from "../ui/Toast";
 
-
 export default function ReimbursementPage({ 
   employeeId, 
   name, 
@@ -13,47 +12,53 @@ export default function ReimbursementPage({
 }: Readonly<{ employeeId: string; name: string; role: string }>) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [toast, setToast] = useState<{ message: string; type: ToastType } | null>(null);
+
   const showToast = (message: string, type: ToastType) => {
     setToast({ message, type });
   };
 
   const handleReimbursementSubmit = async (formData: FormData, type: ClaimType) => {
     setIsSubmitting(true);
-
     let url = "";
     let method = "POST";
 
-    if (type === "TEAM_EVENTS") {
-      url = "/api/reimbursements/team";
-      formData.append("submittedById", employeeId);
-      formData.append("userRole", role);
-      formData.set("type", "TEAM_EVENTS");
-      if (!formData.has("name")) formData.append("name", name);
-    } 
-    else if (type === "CERTIFICATION") {
-      const certId = formData.get("reimbursementId");
-      if (!certId || certId === "undefined") {
-        showToast("Please select a valid certification.", "error");
-        setIsSubmitting(false);
-        return;
+    try {
+      if (type === "TEAM_EVENTS") {
+        url = "/api/reimbursements/team";
+        formData.set("type", "TEAM_EVENTS");
+        formData.append("submittedById", employeeId);
+        formData.append("userRole", role);
+        if (!formData.has("name")) formData.append("name", name);
+        if (!formData.has("managerId")) {
+           formData.append("managerId", "MGR_DEFAULT"); 
+        }
+        if (formData.has("attachments") && !formData.has("files")) {
+          const attachments = formData.getAll("attachments");
+          attachments.forEach(file => formData.append("files", file));
+          formData.delete("attachments");
+        }
+      } 
+      else if (type === "CERTIFICATION") {
+        const certId = formData.get("reimbursementId");
+        if (!certId || certId === "undefined") {
+          throw new Error("Please select a valid certification.");
+        }
+
+        url = `/api/reimbursements/${certId}/complete-certification`;
+        method = "PUT";
+        const amountValue = formData.get("amount");
+        formData.append("finalAmount", amountValue as string);
+      } 
+      else {
+        url = "/api/reimbursements/submit";
+        formData.set("type", "NORMAL");
+        formData.append("submittedBy", employeeId);
+        if (!formData.has("name")) formData.append("name", name);
       }
 
-      url = `/api/reimbursements/${certId}/complete-certification`;
-      method = "PUT";
-      const amountValue = formData.get("amount");
-      formData.append("finalAmount", amountValue as string);
-    } 
-    else {
-      url = "/api/reimbursements/submit";
-      formData.append("submittedBy", employeeId);
-      formData.set("type", "NORMAL");
-      if (!formData.has("name")) formData.append("name", name);
-    }
-
-    try {
       await apiFetch(url, {
         method: method,
-        body: formData,
+        body: formData, 
       });
       
       showToast("Claim submitted successfully!", "success");

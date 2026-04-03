@@ -8,7 +8,7 @@ import Dropdown from "./ui/Dropdown";
 export interface FormField {
   name: string;
   label: string;
-  type: "text" | "password" | "email" | "select";
+  type: "text" | "password" | "email" | "select" | "checkbox-group"; // Added checkbox-group
   placeholder?: string;
   options?: { value: string; label: string }[];
   gridCols?: 1 | 2;
@@ -49,7 +49,6 @@ export default function ModalForm<T extends Record<string, any>>({
     if (open) {
       setForm(initialData || ({} as T));
       setErrors({});
-
       document.body.style.overflow = "hidden";
     } else {
       document.body.style.overflow = "unset";
@@ -59,7 +58,7 @@ export default function ModalForm<T extends Record<string, any>>({
     };
   }, [open, initialData]);
 
-  const handleUpdateField = useCallback((name: string, value: string) => {
+  const handleUpdateField = useCallback((name: string, value: any) => {
     setForm((prev) => ({ ...prev, [name]: value }));
     setErrors((prev) => ({ ...prev, [name]: "" }));
   }, []);
@@ -125,6 +124,26 @@ export default function ModalForm<T extends Record<string, any>>({
                       errors[field.name] ? "ring-1 ring-red-500 rounded-lg" : ""
                     }
                   />
+                ) : field.type === "checkbox-group" ? (
+                  <div className="grid grid-cols-2 gap-2 mt-1">
+                    {field.options?.map((opt) => (
+                      <label key={opt.value} className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          className="w-4 h-4 rounded border-gray-300 text-[#009A74] focus:ring-[#009A74]"
+                          checked={(form[field.name] as string[] || []).includes(opt.value)}
+                          onChange={(e) => {
+                            const current = (form[field.name] as string[]) || [];
+                            const next = e.target.checked
+                              ? [...current, opt.value]
+                              : current.filter((v) => v !== opt.value);
+                            handleUpdateField(field.name, next);
+                          }}
+                        />
+                        {opt.label}
+                      </label>
+                    ))}
+                  </div>
                 ) : (
                   <input
                     name={field.name}

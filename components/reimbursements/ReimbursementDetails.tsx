@@ -46,7 +46,7 @@ export default function ReimbursementDetail({
 
         setData(res);
         setAllowedNextStatuses(res.allowedNextStatuses || []);
-        
+
         if (res.allowedNextStatuses?.length > 0) {
           setStatus(res.allowedNextStatuses[0]);
         } else {
@@ -54,7 +54,7 @@ export default function ReimbursementDetail({
         }
 
         setApprovedAmount(res.reimbursement.approvedAmount ?? "");
-        setReason(""); // Clear reason on load so the reviewer writes a fresh one
+        setReason(""); 
 
       } catch (err: any) {
         setError(err.message || "Failed to load data");
@@ -74,7 +74,7 @@ export default function ReimbursementDetail({
       showToast("Please enter a valid approved amount.", "error");
       return;
     }
-    
+
     if (status.includes("REJECTED") && !reason.trim()) {
       showToast("Please provide a reason for rejection.", "error");
       return;
@@ -83,7 +83,7 @@ export default function ReimbursementDetail({
     try {
       const payload = {
         status,
-        reason: reason.trim(), 
+        reason: reason.trim(),
         processedById: employeeId,
         approvedAmount: approvedAmount === "" ? null : Number(approvedAmount),
       };
@@ -95,9 +95,12 @@ export default function ReimbursementDetail({
       });
 
       showToast("Update successful!", "success");
-      
+      const redirectPath = employeeRole === "MANAGER"
+        ? "/reimbursement"
+        : "/reimbursement-form";
+
       setTimeout(() => {
-        router.push("/reimbursement-request");
+        router.push(redirectPath);
         router.refresh();
       }, 1500);
 
@@ -118,7 +121,7 @@ export default function ReimbursementDetail({
           onClose={() => setToast(null)}
         />
       )}
-      
+
       <ReimbursementDetailView
         reimbursement={data.reimbursement}
         allowedNextStatuses={allowedNextStatuses}
@@ -128,7 +131,7 @@ export default function ReimbursementDetail({
         reason={reason}
         approvedAmount={approvedAmount}
         onStatusChange={setStatus}
-        onReasonChange={setReason} 
+        onReasonChange={setReason}
         onAmountChange={setApprovedAmount}
         onSubmit={handleSubmit}
         isLocked={allowedNextStatuses.length === 0}

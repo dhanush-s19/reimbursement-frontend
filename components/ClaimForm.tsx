@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { Reimbursement } from "@/types/reimbursement";
 import Button from "./ui/Button";
 import FileUpload from "./FileUpload";
-import { IndianRupee, Users, User, Award, ChevronDown, Hash } from "lucide-react";
+import { IndianRupee, Users, User, Award, ChevronDown} from "lucide-react";
 import { FormField, inputClasses } from "./ui/Form";
 import { apiFetch } from "@/lib/api";
 
@@ -46,7 +46,7 @@ export default function ClaimForm({
   const [selectedManagerId, setSelectedManagerId] = useState("");
   const [approvedCerts, setApprovedCerts] = useState<Reimbursement[]>([]);
   const [selectedCertId, setSelectedCertId] = useState("");
-  const [teamSize, setTeamSize] = useState("");
+
 
   const [files, setFiles] = useState<File[]>([]);
   const [certFiles, setCertFiles] = useState<File[]>([]);
@@ -54,7 +54,6 @@ export default function ClaimForm({
 
   const isManager = userRole === "MANAGER";
 
-  // Reset fields when type changes
   useEffect(() => {
     if (!isEdit) {
       setTitle("");
@@ -64,7 +63,6 @@ export default function ClaimForm({
       setInvoiceNote("");
       setSelectedManagerId("");
       setSelectedCertId("");
-      setTeamSize("");
       setFiles([]);
       setCertFiles([]);
       setError(null);
@@ -106,7 +104,7 @@ export default function ClaimForm({
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => { 
+  const handleSubmit = async (e: React.SubmitEvent) => {
     e.preventDefault();
     setError(null);
 
@@ -134,7 +132,6 @@ export default function ClaimForm({
     formData.append("amount", amount);
     formData.append("title", title);
     if (description) formData.append("description", description);
-    formData.append("noInvoice", String(noInvoice));
     if (invoiceNote) formData.append("invoiceNote", invoiceNote);
     formData.append("type", type);
 
@@ -142,12 +139,18 @@ export default function ClaimForm({
       if (!isManager && !selectedManagerId) {
         return setError("Please select an approving manager");
       }
-      if (!teamSize || parseInt(teamSize) <= 0) {
-        return setError("Please enter the number of team members");
+
+      if (isManager) {
+        formData.append("managerId", employeeId);
+        formData.append("managerName", employeeName);
+      } else if (selectedManagerId) {
+        const selectedManager = managers.find(m => m.id === selectedManagerId);
+        formData.append("managerId", selectedManagerId);
+        if (selectedManager) {
+          formData.append("managerName", selectedManager.name);
+        }
       }
-      if (selectedManagerId) formData.append("managerId", selectedManagerId);
       formData.append("name", employeeName);
-      formData.append("teamSize", teamSize); 
     }
 
     if (type === "CERTIFICATION") {
@@ -172,21 +175,6 @@ export default function ClaimForm({
 
       {type === "TEAM_EVENTS" && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <FormField label="Team Members Count" required>
-            <div className="relative">
-              <Hash className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
-              <input
-                type="number"
-                value={teamSize}
-                onChange={(e) => setTeamSize(e.target.value)}
-                className={`${inputClasses(false)} pl-9`}
-                placeholder="Number of people"
-                min="1"
-                required
-              />
-            </div>
-          </FormField>
-
           {!isManager && (
             <FormField label="Select Manager" required>
               <div className="relative">

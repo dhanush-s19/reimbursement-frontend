@@ -193,7 +193,7 @@ export default function ReimbursementList({ role }: Props) {
                   key={v}
                   size="sm"
                   variant={view === v ? "secondary" : "ghost"}
-                  className={`rounded-xl px-4 capitalize text-xs font-semibold ${view === v ? "bg-white shadow-sm hover:bg-white" : "text-gray-500"
+                  className={`rounded-xl px-4 capitalize text-xs font-semibold ${view === v ? "shadow-sm hover:bg-gray" : "text-gray-500"
                     }`}
                   onClick={() => {
                     setView(v);

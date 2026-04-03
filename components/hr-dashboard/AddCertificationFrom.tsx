@@ -10,6 +10,15 @@ interface AddCertificationFormProps {
   onAdded?: () => void;
 }
 
+const ROLES = [
+  "Cloud Engineer",
+  "Data Scientist",
+  "AI Engineer",
+  "Solutions Architect",
+  "Security Analyst",
+  "DevOps Engineer",
+];
+
 const CERT_FIELDS: FormField[] = [
   {
     name: "certification",
@@ -40,6 +49,13 @@ const CERT_FIELDS: FormField[] = [
       { label: "Pending", value: "Pending" },
     ],
     gridCols: 1,
+  },
+  {
+    name: "recommendedRoles",
+    label: "Recommended Roles",
+    type: "checkbox-group",
+    options: ROLES.map((role) => ({ label: role, value: role })),
+    gridCols: 2,
   },
 ];
 
@@ -73,6 +89,9 @@ export default function AddCertificationForm({
     const errors: Record<string, string> = {};
     if (!values.certification) {
       errors.certification = "Certification name is required";
+    }
+    if (!values.recommendedRoles || values.recommendedRoles.length === 0) {
+      errors.recommendedRoles = "Please select at least one role";
     }
     return errors;
   };

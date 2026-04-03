@@ -36,7 +36,7 @@ const HrDashboard = () => {
   useEffect(() => {
     const fetchHrData = async () => {
       try {
-        const data = await apiFetch("/api/users/stats");
+        const data = await apiFetch("/api/reimbursements/hr/stats");
         setStats(data);
       } catch (error) {
         console.error("Failed to load HR stats", error);

@@ -61,7 +61,7 @@ export default function MyReimbursementPage({ role, user }: Readonly<MyReimburse
   );
 
   const isRejected = reimbursement.status.toUpperCase().includes("REJECTED");
-  const submissionCount = reimbursement.submissionCount ?? 1;
+  const submissionCount = reimbursement.submissionCount ?? 0;
   const canResubmit = isRejected && submissionCount < 1;
 
   return (
@@ -79,7 +79,7 @@ export default function MyReimbursementPage({ role, user }: Readonly<MyReimburse
             <div>
               <Card.Title className="flex items-center gap-2">
                 Reimbursement Summary
-                {submissionCount > 1 && (
+                {submissionCount > 0 && (
                   <span className="flex items-center gap-1 px-2 py-0.5 bg-amber-100 text-amber-700 border border-amber-200 rounded text-[10px] font-bold uppercase tracking-tighter">
                     <RotateCcw size={10} /> Resubmitted
                   </span>

@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { Reimbursement } from "@/types/reimbursement";
 import Button from "./ui/Button";
 import FileUpload from "./FileUpload";
-import { IndianRupee, Users, User, Award, ChevronDown} from "lucide-react";
+import { IndianRupee, Users, User, Award, ChevronDown } from "lucide-react";
 import { FormField, inputClasses } from "./ui/Form";
 import { apiFetch } from "@/lib/api";
 
@@ -108,25 +108,24 @@ export default function ClaimForm({
     e.preventDefault();
     setError(null);
 
-    if (!amount || isNaN(parseFloat(amount))) {
-      return setError("Please enter a valid amount");
+    if (!isEdit) {
+      if (type === "CERTIFICATION") {
+        if (certFiles.length === 0) {
+          return setError("Please upload your completed certificate");
+        }
+        if (files.length === 0) {
+          return setError("Please upload the final invoice/bill");
+        }
+      } else {
+        if (!noInvoice && files.length === 0) {
+          return setError("Please upload an invoice or receipt");
+        }
+        if (noInvoice && files.length === 0) {
+          return setError("Please upload a voucher since the invoice is missing");
+        }
+      }
     }
 
-    if (type === "CERTIFICATION") {
-      if (certFiles.length === 0) {
-        return setError("Please upload your completed certificate");
-      }
-      if (files.length === 0) {
-        return setError("Please upload the final invoice/bill");
-      }
-    } else {
-      if (!noInvoice && files.length === 0) {
-        return setError("Please upload an invoice or receipt");
-      }
-      if (noInvoice && files.length === 0) {
-        return setError("Please upload a voucher since the invoice is missing");
-      }
-    }
 
     const formData = new FormData();
     formData.append("amount", amount);

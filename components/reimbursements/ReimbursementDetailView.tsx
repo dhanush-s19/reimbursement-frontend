@@ -257,9 +257,11 @@ export default function ReimbursementDetailView(props: Readonly<Props>) {
 
               {reimbursement.resubmitted && (
                 <div className="mt-3 p-3 bg-amber-50/50 rounded border border-amber-100 border-dashed">
-                  <p className="text-[10px] font-bold text-amber-800 uppercase tracking-tight mb-1">Resubmission Note:</p>
+                  <p className="text-[10px] font-bold text-amber-800 uppercase tracking-tight mb-1">
+                    Accountant's Remarks:
+                  </p>
                   <p className="text-[11px] text-slate-500 italic leading-snug">
-                    {reimbursement.reason || "The employee resubmitted this for further review."}
+                    {reimbursement.reason || "No specific feedback provided."}
                   </p>
                 </div>
               )}

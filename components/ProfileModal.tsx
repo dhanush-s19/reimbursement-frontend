@@ -1,8 +1,10 @@
 'use client';
 
+import { useState } from "react"; 
 import { apiFetch } from "@/lib/api";
 import ModalForm, { FormField } from "./ModalForm";
 import { useSession } from "next-auth/react";
+import Toast, { ToastType } from "./ui/Toast";
 
 type ProfileModalProps = {
   isOpen: boolean;
@@ -30,7 +32,10 @@ export default function ProfileModal({
   userId,
 }: Readonly<ProfileModalProps>) {
   const { update } = useSession();
-
+  const [toast, setToast] = useState<{ message: string; type: ToastType } | null>(null);
+  const showToast = (message: string, type: ToastType) => {
+    setToast({ message, type });
+  };
   const handleSave = async (values: ProfileFormValues) => {
     try {
       if (values.name !== initialName) {
@@ -40,7 +45,6 @@ export default function ProfileModal({
         });
         await update({ name: values.name });
       }
-
       if (values.newPassword && values.newPassword.trim() !== "") {
         await apiFetch(`/api/users/${userId}/password`, {
           method: "PATCH",
@@ -50,10 +54,11 @@ export default function ProfileModal({
           }),
         });
       }
-
-      onClose();
-    } catch (error) {
+      showToast("Profile updated successfully!", "success");
+      setTimeout(onClose, 2000); 
+    } catch (error: any) {
       console.error("Failed to update profile:", error);
+      showToast(error.message || "Failed to update profile. Please try again.", "error");
     }
   };
 
@@ -68,18 +73,26 @@ export default function ProfileModal({
     }
     return errors;
   };
-
   return (
-    <ModalForm<ProfileFormValues>
-      open={isOpen}
-      onClose={onClose}
-      onSave={handleSave}
-      title="Account Settings"
-      description="Update your profile information and security settings."
-      initialData={{ name: initialName, oldPassword: "", newPassword: "" }}
-      fields={FIELDS}
-      validationRules={validate}
-      submitText="Save Changes"
-    />
+    <>
+      {toast && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast(null)}
+        />
+      )}
+      <ModalForm<ProfileFormValues>
+        open={isOpen}
+        onClose={onClose}
+        onSave={handleSave}
+        title="Account Settings"
+        description="Update your profile information and security settings."
+        initialData={{ name: initialName, oldPassword: "", newPassword: "" }}
+        fields={FIELDS}
+        validationRules={validate}
+        submitText="Save Changes"
+      />
+    </>
   );
 }

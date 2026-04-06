@@ -1,19 +1,19 @@
 "use client";
 
 import React, { useState } from "react";
-import { 
-  Maximize2, 
-  FileText, 
-  IndianRupee, 
-  Clock, 
-  Tag, 
-  ChevronRight, 
-  Users, 
-  Award, 
-  RotateCcw, 
-  AlertCircle, 
+import {
+  Maximize2,
+  FileText,
+  IndianRupee,
+  Clock,
+  Tag,
+  ChevronRight,
+  Users,
+  Award,
+  RotateCcw,
+  AlertCircle,
   History,
-  UserCheck 
+  UserCheck
 } from "lucide-react";
 import Card from "../ui/Card";
 import { ReimbursementActionCard } from "./ReimbursementActionCard";
@@ -39,7 +39,7 @@ export default function ReimbursementDetailView(props: Readonly<Props>) {
   const invoiceUrl = reimbursement.fileUrls?.[0] || null;
   const certificateUrl = reimbursement.fileUrls?.[1] || null;
   const [activeView, setActiveView] = useState<"invoice" | "certificate">("invoice");
-
+  const invoiceNote = reimbursement.invoiceNote;
   const currentUrl = activeView === "invoice" ? invoiceUrl : certificateUrl;
   const hasCertificate = !!certificateUrl;
   const isPdf = currentUrl?.toLowerCase().endsWith(".pdf");
@@ -52,37 +52,46 @@ export default function ReimbursementDetailView(props: Readonly<Props>) {
     if (!url) {
       return (
         <div className="text-center p-12">
-          <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <FileText className="text-slate-300" size={32} />
-          </div>
-          <p className="text-slate-500 text-sm font-medium">No file provided for this section.</p>
+          <FileText className="text-slate-300 mx-auto mb-4" size={32} />
+          <p className="text-slate-500 text-sm font-medium">No file provided.</p>
         </div>
       );
     }
 
-    if (isPdf) {
-      return (
-        <iframe
-          src={`${url}#toolbar=0`}
-          className="w-full h-[600px] rounded border border-slate-200 bg-white"
-          title="Document Preview"
-        />
-      );
-    }
-
     return (
-      <button onClick={openFullScreen} className="cursor-zoom-in flex justify-center w-full">
-        <img src={url} alt="Evidence" className="max-w-full h-auto rounded border border-slate-200" />
-      </button>
+      <div className="w-full flex flex-col gap-4">
+        {activeView === "invoice" && invoiceNote && (
+          <div className="mx-4 mt-4 p-4 bg--50 border-l-4 border-green-400 rounded-r-lg shadow-sm">
+            <div className="flex items-center gap-2 mb-1">
+              <FileText size={14} className="text-green-600" />
+              <span className="text-[10px] font-black uppercase text-black-800 tracking-tight">
+                Invoice Note
+              </span>
+            </div>
+            <p className="text-sm text-black-900 font-medium leading-relaxed">
+              {invoiceNote}
+            </p>
+          </div>
+        )}
+
+        <div className="p-4 flex justify-center">
+          {isPdf ? (
+            <iframe
+              src={`${url}#toolbar=0`}
+              className="w-full h-[600px] rounded border border-slate-200 bg-white"
+              title="Document Preview"
+            />
+          ) : (
+            <button onClick={openFullScreen} className="cursor-zoom-in">
+              <img src={url} alt="Evidence" className="max-w-full h-auto rounded border border-slate-200" />
+            </button>
+          )}
+        </div>
+      </div>
     );
   };
 
   const isTeamEvent = reimbursement.type === "TEAM_EVENTS";
-  const teamCount = reimbursement.teamMemberIds?.length || 0;
-  
-  /** * Logic: Show who forwarded it only for Team Events. 
-   * This assumes the API returns 'processedByName' for the person who moved it to the current state.
-   */
   const forwardedByName = reimbursement.managerName;
 
   return (
@@ -99,7 +108,7 @@ export default function ReimbursementDetailView(props: Readonly<Props>) {
             <h1 className="text-3xl font-extrabold tracking-tight text-slate-900">
               {reimbursement.title || "Expense Claim"}
             </h1>
-            
+
             {reimbursement.resubmitted && (
               <span className="flex items-center gap-1 px-2.5 py-1 bg-amber-100 text-amber-800 border border-amber-200 rounded-full text-[10px] font-black uppercase tracking-tight">
                 <RotateCcw size={12} /> Resubmitted v{reimbursement.submissionCount}
@@ -161,7 +170,7 @@ export default function ReimbursementDetailView(props: Readonly<Props>) {
                   <History size={18} className="text-rose-500 shrink-0" />
                   <h3 className="text-sm font-bold">Audit History (Previous Rejections)</h3>
                 </div>
-                
+
                 <div className="space-y-4">
                   {reimbursement.rejectionHistory.map((history: any, index: number) => (
                     <div key={index} className="relative pl-6 border-l-2 border-rose-200 pb-2 last:pb-0">
@@ -186,15 +195,13 @@ export default function ReimbursementDetailView(props: Readonly<Props>) {
               </Card.Content>
             </Card>
           )}
-
-          {/* Alert for Resubmitted Claims */}
           {reimbursement.resubmitted && (
             <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 flex gap-3 shadow-sm">
               <AlertCircle className="text-amber-600 shrink-0" size={20} />
               <div>
                 <p className="text-sm font-bold text-amber-900 mb-0.5">Updated Submission</p>
                 <p className="text-xs text-amber-700 leading-relaxed">
-                  This claim was previously rejected and has been updated by the employee. 
+                  This claim was previously rejected and has been updated by the employee.
                   Check the latest notes below.
                 </p>
               </div>
@@ -220,20 +227,17 @@ export default function ReimbursementDetailView(props: Readonly<Props>) {
                       <p className="text-sm text-slate-500 flex items-center gap-1.5">
                         <Users size={14} /> Team Size
                       </p>
-                      <p className="text-sm font-bold text-slate-700">
-                        {teamCount} {teamCount === 1 ? 'Member' : 'Members'}
-                      </p>
                     </div>
-                    
+
                     {forwardedByName && (
-                       <div className="border-l border-slate-100 pl-6">
+                      <div className="border-l border-slate-100 pl-6">
                         <p className="text-sm text-slate-500 flex items-center gap-1.5">
                           <UserCheck size={14} className="text-emerald-600" /> Manager Handled
                         </p>
                         <p className="text-sm font-bold text-slate-700">
                           {forwardedByName}
                         </p>
-                       </div>
+                      </div>
                     )}
                   </div>
                 )}
@@ -250,14 +254,14 @@ export default function ReimbursementDetailView(props: Readonly<Props>) {
               <p className="text-sm leading-relaxed text-slate-600 bg-slate-50 p-4 rounded-lg">
                 {reimbursement.description || "No description provided."}
               </p>
-            
+
               {reimbursement.resubmitted && (
-                  <div className="mt-3 p-3 bg-amber-50/50 rounded border border-amber-100 border-dashed">
-                    <p className="text-[10px] font-bold text-amber-800 uppercase tracking-tight mb-1">Resubmission Note:</p>
-                    <p className="text-[11px] text-slate-500 italic leading-snug">
-                        {reimbursement.reason || "The employee resubmitted this for further review."}
-                    </p>
-                  </div>
+                <div className="mt-3 p-3 bg-amber-50/50 rounded border border-amber-100 border-dashed">
+                  <p className="text-[10px] font-bold text-amber-800 uppercase tracking-tight mb-1">Resubmission Note:</p>
+                  <p className="text-[11px] text-slate-500 italic leading-snug">
+                    {reimbursement.reason || "The employee resubmitted this for further review."}
+                  </p>
+                </div>
               )}
             </Card.Content>
           </Card>

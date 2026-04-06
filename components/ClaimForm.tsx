@@ -156,7 +156,7 @@ export default function ClaimForm({
     if (type === "CERTIFICATION") {
       if (!selectedCertId) return setError("Please select a certification");
       formData.append("reimbursementId", selectedCertId);
-      certFiles.forEach((f) => formData.append("certFiles", f));
+      certFiles.forEach((f) => formData.append("files", f));
     }
 
     files.forEach((f) => formData.append("files", f));
@@ -230,7 +230,7 @@ export default function ClaimForm({
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               className={inputClasses(false)}
-              placeholder="e.g. Team Lunch / Internet Bill"
+              placeholder="Provide the Expense Title"
               required
             />
           </FormField>

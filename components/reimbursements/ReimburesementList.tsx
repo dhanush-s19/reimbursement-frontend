@@ -125,7 +125,7 @@ export default function ReimbursementList({ role }: Props) {
 
           {r.resubmitted && (
             <span className="flex items-center gap-1 px-1.5 py-0.5 bg-amber-100 text-amber-700 border border-amber-200 rounded text-[9px] font-extrabold uppercase tracking-tighter">
-              <RotateCcw size={10} /> Resubmitted v{r.submissionCount}
+              <RotateCcw size={10} /> Resubmitted
             </span>
           )}
         </div>

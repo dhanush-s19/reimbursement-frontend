@@ -43,11 +43,9 @@ export default function ReimbursementDetailView(props: Readonly<Props>) {
   const currentUrl = activeView === "invoice" ? invoiceUrl : certificateUrl;
   const hasCertificate = !!certificateUrl;
   const isPdf = currentUrl?.toLowerCase().endsWith(".pdf");
-
   const openFullScreen = () => {
     if (currentUrl) window.open(currentUrl, "_blank", "noopener,noreferrer");
   };
-
   const renderAttachment = (url: string | null) => {
     if (!url) {
       return (
@@ -57,7 +55,6 @@ export default function ReimbursementDetailView(props: Readonly<Props>) {
         </div>
       );
     }
-
     return (
       <div className="w-full flex flex-col gap-4">
         {activeView === "invoice" && invoiceNote && (
@@ -111,7 +108,7 @@ export default function ReimbursementDetailView(props: Readonly<Props>) {
 
             {reimbursement.resubmitted && (
               <span className="flex items-center gap-1 px-2.5 py-1 bg-amber-100 text-amber-800 border border-amber-200 rounded-full text-[10px] font-black uppercase tracking-tight">
-                <RotateCcw size={12} /> Resubmitted v{reimbursement.submissionCount}
+                <RotateCcw size={12} /> Resubmitted
               </span>
             )}
           </div>
@@ -185,9 +182,6 @@ export default function ReimbursementDetailView(props: Readonly<Props>) {
                       </div>
                       <p className="text-xs text-slate-700 font-medium italic">
                         "{history.reason || "No comment provided."}"
-                      </p>
-                      <p className="text-[9px] text-slate-400 mt-1 uppercase">
-                        Reviewed By: {history.rejectedBy || "System"}
                       </p>
                     </div>
                   ))}

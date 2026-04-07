@@ -8,7 +8,6 @@ import {
   Clock,
   Tag,
   ChevronRight,
-  Users,
   Award,
   RotateCcw,
   AlertCircle,

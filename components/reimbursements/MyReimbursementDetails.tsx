@@ -62,7 +62,14 @@ export default function MyReimbursementPage({ role, user }: Readonly<MyReimburse
 
   const isRejected = reimbursement.status.toUpperCase().includes("REJECTED");
   const submissionCount = reimbursement.submissionCount ?? 0;
-  const canResubmit = isRejected && submissionCount < 1;
+
+
+  const isCertificate = reimbursement.type === "CERTIFICATE";
+
+  const canResubmit =
+    isRejected &&
+    submissionCount < 1 &&
+    !isCertificate;
 
   return (
     <div className="bg-[#F9FAFB] min-h-screen pb-10">
@@ -139,13 +146,13 @@ export default function MyReimbursementPage({ role, user }: Readonly<MyReimburse
                   ) : (
                     <span className="text-red-600 font-semibold flex items-center gap-2">
                       <AlertCircle size={14} />
-                      Maximum resubmission limit reached. No further edits allowed.
+                      No Resubmission Alowed
                     </span>
                   )}
                 </div>
-                
+
                 {canResubmit && (
-                  <Button 
+                  <Button
                     variant="secondary"
                     onClick={() => setIsEditModalOpen(true)}
                     className="w-full sm:w-auto flex items-center gap-2 text-white px-6"
@@ -161,13 +168,13 @@ export default function MyReimbursementPage({ role, user }: Readonly<MyReimburse
             <span>Last Updated: {new Date(reimbursement.updatedAt || "").toLocaleDateString()}</span>
           </Card.Footer>
         </Card>
-        
+
         {reimbursement && (
           <EditClaimModal
             reimbursement={reimbursement}
             isOpen={isEditModalOpen}
             onClose={() => setIsEditModalOpen(false)}
-            onSuccess={loadData} 
+            onSuccess={loadData}
             user={user}
           />
         )}

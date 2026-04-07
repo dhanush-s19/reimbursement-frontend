@@ -16,10 +16,10 @@ interface RejectionHistory {
 export default function ReimbursementDetail({
   employeeId,
   employeeRole
-}: {
+}: Readonly<{
   employeeId: string;
   employeeRole: string;
-}) {
+}>) {
   const { id } = useParams();
   const router = useRouter();
 
@@ -54,7 +54,7 @@ export default function ReimbursementDetail({
         }
 
         setApprovedAmount(res.reimbursement.approvedAmount ?? "");
-        setReason(""); 
+        setReason(res.reimbursement.reason || ""); 
 
       } catch (err: any) {
         setError(err.message || "Failed to load data");
@@ -97,7 +97,7 @@ export default function ReimbursementDetail({
       showToast("Update successful!", "success");
       const redirectPath = employeeRole === "MANAGER"
         ? "/reimbursement"
-        : "/reimbursement-form";
+        : "/reimbursement-request";
 
       setTimeout(() => {
         router.push(redirectPath);

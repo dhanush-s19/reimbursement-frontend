@@ -90,7 +90,20 @@ export const ReimbursementActionCard = ({
                 className="w-full border border-gray-300 text-gray-900 rounded-md pl-8 pr-3 py-2 text-sm font-medium focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all"
                 placeholder="0.00"
                 value={approvedAmount}
-                onChange={(e) => onAmountChange(e.target.value === "" ? "" : Number(e.target.value))}
+                onKeyDown={(e) => {
+                  if (["e", "E", "+", "-"].includes(e.key)) {
+                    e.preventDefault();
+                  }
+                }}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  if (val === "") {
+                    onAmountChange("");
+                  } else {
+                    const num = Number(val);
+                    if (num >= 0) onAmountChange(num);
+                  }
+                }}
               />
             </div>
           </div>

@@ -21,6 +21,7 @@ export default function EmployeeFormModal({ open, onClose, employee, onSave }: R
     { 
       name: "role", label: "Role", type: "select", gridCols: 1,
       options: [
+        { value: "", label: "Select Role" },
         { value: "HR", label: "HR" },
         { value: "EMPLOYEE", label: "Employee" },
         { value: "MANAGER", label: "Manager" },
@@ -30,11 +31,15 @@ export default function EmployeeFormModal({ open, onClose, employee, onSave }: R
     { 
       name: "department", label: "Department", type: "select", gridCols: 1,
       options: [
+        { value: "", label: "Select Department" },
         { value: "DEVELOPMENT", label: "Development" },
+        { value: "HR", label: "HR" },
         { value: "QA", label: "QA" },
         { value: "BA", label: "BA" },
         { value: "FINANCE", label: "Finance" },
         { value: "UI_UX", label: "UI/UX" },
+        { value: "DIGITAL_MARKETING", label: "Digital Marketing" },
+        { value: "GRAPHIC_DESIGNER", label: "Graphic Designer" },
       ]
     },
   ];

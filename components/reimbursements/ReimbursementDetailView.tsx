@@ -210,6 +210,16 @@ export default function ReimbursementDetailView(props: Readonly<Props>) {
                   <p className="text-sm text-slate-500 flex items-center gap-1.5"><IndianRupee size={14} /> Requested</p>
                   <p className="text-2xl font-mono font-bold text-slate-900">₹{reimbursement.amount?.toLocaleString()}</p>
                 </div>
+
+                <div className="border-l border-slate-100 pl-6">
+                  <p className="text-sm text-slate-500 flex items-center gap-1.5">
+                    <UserCheck size={14} className="text-emerald-600" /> Approved 
+                  </p>
+                  <p className={`text-2xl font-mono font-bold ${reimbursement.approvedAmount ? "text-emerald-600" : "text-slate-300"
+                    }`}>
+                    ₹{reimbursement.approvedAmount?.toLocaleString() ?? "0"}
+                  </p>
+                </div>
                 <div className="border-l border-slate-100 pl-6">
                   <p className="text-sm text-slate-500 flex items-center gap-1.5"><Tag size={14} /> Category</p>
                   <p className="text-sm font-bold uppercase text-slate-700">{reimbursement.type?.replaceAll("_", " ")}</p>
@@ -217,12 +227,6 @@ export default function ReimbursementDetailView(props: Readonly<Props>) {
 
                 {isTeamEvent && (
                   <div className="col-span-2 pt-4 border-t border-slate-100 grid grid-cols-2 gap-4">
-                    <div>
-                      <p className="text-sm text-slate-500 flex items-center gap-1.5">
-                        <Users size={14} /> Team Size
-                      </p>
-                    </div>
-
                     {forwardedByName && (
                       <div className="border-l border-slate-100 pl-6">
                         <p className="text-sm text-slate-500 flex items-center gap-1.5">
@@ -252,7 +256,7 @@ export default function ReimbursementDetailView(props: Readonly<Props>) {
               {reimbursement.resubmitted && (
                 <div className="mt-3 p-3 bg-amber-50/50 rounded border border-amber-100 border-dashed">
                   <p className="text-[10px] font-bold text-amber-800 uppercase tracking-tight mb-1">
-                    Accountant's Remarks:
+                    Latest Remarks:
                   </p>
                   <p className="text-[11px] text-slate-500 italic leading-snug">
                     {reimbursement.reason || "No specific feedback provided."}

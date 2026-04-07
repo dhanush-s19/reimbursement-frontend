@@ -190,6 +190,7 @@ export default function EmployeePage() {
               { label: "Finance", value: "FINANCE" },
               { label: "Marketing", value: "DIGITAL_MARKETING" },
               { label: "UI/UX", value: "UI_UX" },
+              { label: "Graphic Designer", value: "GRAPHIC_DESIGNER" },
             ]}
             actions={
               <EmployeeActions

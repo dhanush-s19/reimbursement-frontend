@@ -8,7 +8,7 @@ import Dropdown from "./ui/Dropdown";
 export interface FormField {
   name: string;
   label: string;
-  type: "text" | "password" | "email" | "select" | "checkbox-group"; // Added checkbox-group
+  type: "text" | "password" | "email" | "select" | "checkbox-group"; 
   placeholder?: string;
   options?: { value: string; label: string }[];
   gridCols?: 1 | 2;
@@ -86,11 +86,11 @@ export default function ModalForm<T extends Record<string, any>>({
   if (!open || !mounted) return null;
 
   return createPortal(
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4"> 
       <div
         onClick={onClose}
         className="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity"
-      />
+      /> 
 
       <div className="relative bg-white rounded-3xl shadow-2xl w-full max-w-lg max-h-[90vh] flex flex-col overflow-hidden animate-in fade-in zoom-in duration-200">
         <div className="px-6 py-4 border-b">

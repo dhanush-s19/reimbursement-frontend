@@ -17,6 +17,7 @@ const ROLES = [
   "Solutions Architect",
   "Security Analyst",
   "DevOps Engineer",
+  "Developer",
 ];
 
 const CERT_FIELDS: FormField[] = [
@@ -36,6 +37,9 @@ const CERT_FIELDS: FormField[] = [
       { label: "AI", value: "AI" },
       { label: "Data", value: "Data" },
       { label: "Security", value: "Security" },
+      { label: "Mobile", value: "Mobile" },
+      { label: "Java", value: "Java" },
+      { label: "Database", value: "Database" },
     ],
     gridCols: 1,
   },
@@ -46,7 +50,6 @@ const CERT_FIELDS: FormField[] = [
     options: [
       { label: "Active", value: "Active" },
       { label: "On Hold", value: "On Hold" },
-      { label: "Pending", value: "Pending" },
     ],
     gridCols: 1,
   },

@@ -54,7 +54,8 @@ export default function EmployeePage() {
       setEmployees(list);
       setTotalPages(Array.isArray(data) ? 1 : data?.totalPages || 1);
     } catch (error) {
-      showToast("Failed to fetch employees", "error");
+      const message = error instanceof Error ? error.message : "An unexpected error occurred";
+      showToast(message, "error");
     } finally {
       setLoading(false);
     }
@@ -70,7 +71,8 @@ export default function EmployeePage() {
       await fetchEmployees();
       showToast("Employee deleted successfully", "success");
     } catch (error) {
-      showToast("Failed to delete employee", "error");
+      const message = error instanceof Error ? error.message : "An unexpected error occurred";
+      showToast(message, "error");
     }
   };
 
@@ -78,10 +80,12 @@ export default function EmployeePage() {
     try {
       const method = selectedEmployee ? "PUT" : "POST";
       const url = selectedEmployee ? `/api/users/${employee.id}` : "/api/users";
+
       if (!employee.department) {
         showToast("Please select a department", "error");
         return;
       }
+
       await apiFetch(url, {
         method,
         body: JSON.stringify(employee),
@@ -94,8 +98,9 @@ export default function EmployeePage() {
         `Employee ${selectedEmployee ? "updated" : "created"} successfully`,
         "success"
       );
-    } catch (error) {
-      showToast("Error saving employee data", "error");
+    } catch (error: any) {
+      const message = error instanceof Error ? error.message : "An unexpected error occurred";
+      showToast(message, "error");
     }
   };
 

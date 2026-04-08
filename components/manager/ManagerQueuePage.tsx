@@ -140,7 +140,7 @@ export default function ManagerQueuePage({ managerId }: Readonly<ManagerQueuePro
                                 <ClipboardCheck className="text-black" size={32} />
                                 <h2 className="text-3xl font-extrabold text-gray-900 tracking-tight">Approval Queue</h2>
                             </div>
-                            <p className="text-gray-500 text-sm italic">Reviewing pending claims for Manager ID: {managerId}</p>
+                            <p className="text-gray-500 text-sm italic">Reviewing pending claims</p>
                         </div>
                     </header>
 

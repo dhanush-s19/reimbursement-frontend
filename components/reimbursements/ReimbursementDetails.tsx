@@ -96,7 +96,7 @@ export default function ReimbursementDetail({
 
       showToast("Update successful!", "success");
       const redirectPath = employeeRole === "MANAGER"
-        ? "/reimbursement"
+        ? "/manager"
         : "/reimbursement-request";
 
       setTimeout(() => {

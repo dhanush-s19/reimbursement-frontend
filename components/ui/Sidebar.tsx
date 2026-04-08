@@ -55,8 +55,6 @@ export default function Sidebar({
           {isOpen ? <X size={20} /> : <Menu size={20} />}
         </Button>
       </div>
-
-      {/* Overlay */}
       {isOpen && (
         <div
           className="fixed inset-0 bg-black/30 backdrop-blur-sm z-40 lg:hidden"
@@ -70,8 +68,6 @@ export default function Sidebar({
         ${isOpen ? "translate-x-0" : "-translate-x-full"} 
         lg:translate-x-0
       `}>
-
-        {/* Profile Section */}
         <Button
           variant="secondary"
           onClick={() => setIsProfileOpen(true)}
@@ -93,8 +89,6 @@ export default function Sidebar({
             <ChevronRight size={15} className="absolute right-4 text-gray-300 group-hover:text-black group-hover:translate-x-1 transition-all" />
           </div>
         </Button>
-
-        {/* Navigation */}
         <nav className="flex-1 px-3 py-6 space-y-1 overflow-y-auto">
           {menuItems.map((item) => {
             const isActive = pathname === item.href;

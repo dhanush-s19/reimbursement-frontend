@@ -102,7 +102,7 @@ export function EnrollmentFormContent({ name, id }: Readonly<EnrollmentProps>) {
         <Info className="text-black-500 shrink-0" size={20} />
         <p className="text-sm text-black-800 leading-relaxed">
           HR approval is required <strong>before</strong> payment. You will
-          upload your invoice for reimbursement after completing the course.
+          upload your invoice and completed certificate for reimbursement after completing the course.
         </p>
       </div>
 

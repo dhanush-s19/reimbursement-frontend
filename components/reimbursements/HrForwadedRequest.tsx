@@ -35,7 +35,7 @@ const SortIcon = ({ field, sortBy, direction }: { field: string; sortBy: string;
   );
 };
 
-export default function HRReimbursementList({ hrId }:Readonly <Props>) {
+export default function HRReimbursementList({ hrId }: Readonly<Props>) {
   const [data, setData] = useState<ReimbursementResponse[]>([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(0);
@@ -71,7 +71,7 @@ export default function HRReimbursementList({ hrId }:Readonly <Props>) {
       setSortBy(field);
       setDirection("desc");
     }
-    setPage(0); 
+    setPage(0);
   };
 
   const handleRowClick = (r: ReimbursementResponse) => {
@@ -79,6 +79,15 @@ export default function HRReimbursementList({ hrId }:Readonly <Props>) {
   };
 
   const columns = [
+    {
+      header: "Employee",
+      render: (r: ReimbursementResponse) => (
+        <div className="flex flex-col">
+          <span className="text-sm font-medium text-gray-900">{r.reimbursement.name}</span>
+          <span className="text-xs text-gray-400">{r.reimbursement.employeeId}</span>
+        </div>
+      ),
+    },
     {
       header: "Title",
       render: (r: ReimbursementResponse) => (
@@ -107,15 +116,6 @@ export default function HRReimbursementList({ hrId }:Readonly <Props>) {
       ),
     },
     {
-      header: "Employee",
-      render: (r: ReimbursementResponse) => (
-        <div className="flex flex-col">
-          <span className="text-sm font-medium text-gray-900">{r.reimbursement.name}</span>
-          <span className="text-xs text-gray-400">{r.reimbursement.employeeId}</span>
-        </div>
-      ),
-    },
-    {
       header: "Status",
       render: (r: ReimbursementResponse) => {
         const status = (r.reimbursement.status ?? "UNKNOWN").replaceAll("_", " ");
@@ -137,7 +137,7 @@ export default function HRReimbursementList({ hrId }:Readonly <Props>) {
           </h2>
           <p className="text-gray-500 mt-1">Pending actions required for employee reimbursements</p>
         </header>
-        
+
         <div className="flex flex-wrap items-center gap-3 mb-6">
           <div className="flex items-center text-gray-400 mr-2">
             <ListFilter size={18} />

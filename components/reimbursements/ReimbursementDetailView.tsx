@@ -61,7 +61,7 @@ export default function ReimbursementDetailView(props: Readonly<Props>) {
             <div className="flex items-center gap-2 mb-1">
               <FileText size={14} className="text-green-600" />
               <span className="text-[10px] font-black uppercase text-black-800 tracking-tight">
-                Invoice Note
+                Voucher Note
               </span>
             </div>
             <p className="text-sm text-black-900 font-medium leading-relaxed">
@@ -136,7 +136,7 @@ export default function ReimbursementDetailView(props: Readonly<Props>) {
                   onClick={() => setActiveView("invoice")}
                   className={`text-xs font-bold px-4 py-1.5 ${activeView === "invoice" ? " shadow-sm" : "text-slate-500"}`}
                 >
-                  Invoice
+                  Invoice / Voucher
                 </Button>
 
                 {hasCertificate && (

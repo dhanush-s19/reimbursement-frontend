@@ -35,7 +35,7 @@ const LoginPage = () => {
 
     const renderTimer = setTimeout(() => {
       triggerToast("Waking up server (Render Free Tier)... please wait.", "info");
-    }, 2000);
+    }, 3000);
 
     const res = await signIn("credentials", {
       redirect: false,

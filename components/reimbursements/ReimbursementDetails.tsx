@@ -85,7 +85,7 @@ export default function ReimbursementDetail({
         status,
         reason: reason.trim(),
         processedById: employeeId,
-        approvedAmount: approvedAmount === "" ? null : Number(approvedAmount),
+        approvedAmount: approvedAmount === "" ? null : approvedAmount.toString(),
       };
 
       await apiFetch(`/api/reimbursements/${id}/status`, {

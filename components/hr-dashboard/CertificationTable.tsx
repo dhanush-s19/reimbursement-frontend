@@ -92,7 +92,7 @@ export default function CertificationTable() {
 
   const handleAdded = () => {
     setShowAddModal(false);
-    setCurrentPage(0); // Reset to first page to see new entry
+    setCurrentPage(0); 
     fetchCertifications();
     showToast("Certification added successfully", "success");
   };
@@ -180,8 +180,6 @@ export default function CertificationTable() {
             onClose={() => setToast(null)}
           />
         )}
-
-        {/* Header Section */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
           <div>
             <h1 className="text-2xl font-bold text-gray-900">Certifications</h1>
@@ -197,8 +195,6 @@ export default function CertificationTable() {
             + Add New
           </Button>
         </div>
-
-        {/* Table Container */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
           <Table
             data={certifications}
@@ -207,17 +203,13 @@ export default function CertificationTable() {
             emptyMessage="No certifications found"
           />
         </div>
-
-        {/* Add Certification Form (Modal handled internally by ModalForm) */}
         <AddCertificationForm
           isOpen={showAddModal}
           onClose={() => setShowAddModal(false)}
           onAdded={handleAdded}
         />
       </main>
-
-      {/* Pagination Footer */}
-      <footer className="fixed bottom-0 left-0 lg:left-64 right-0 bg-white/80 backdrop-blur-md border-t border-gray-200 py-4 z-50">
+      <footer className="fixed bottom-0 left-0 right-0 bg-white/80 backdrop-blur-md border-t border-gray-200 py-4 shadow-[0_-4px_20px_-5px_rgba(0,0,0,0.05)] z-10">
         <div className="flex justify-center items-center">
           <Pagination
             currentPage={currentPage}

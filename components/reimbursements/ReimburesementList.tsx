@@ -64,7 +64,7 @@ export default function ReimbursementList({ role }: Props) {
   }, [fetchReimbursements]);
 
   const handleRowClick = (r: Reimbursement) => {
-    if (role === "ACCOUNTANT") {
+    if (role === "HR" ||"ACCOUNTANT") {
       router.push(`/reimbursement-request/${r.id}`);
     }
   };

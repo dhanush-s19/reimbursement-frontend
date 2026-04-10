@@ -100,7 +100,7 @@ const HrDashboard = () => {
         <Card
           hoverable
           className="cursor-pointer"
-          onClick={() => router.push("/hr/events")}
+          onClick={() => router.push("/hr/hr-reimbursement-request")}
         >
           <Card.Content className="flex items-center gap-4">
             <div className="p-3 bg-gray-100 rounded-xl text-black">

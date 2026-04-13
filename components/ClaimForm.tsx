@@ -165,7 +165,7 @@ export default function ClaimForm({
     <form onSubmit={handleSubmit} className="space-y-6">
       {!isEdit && (
         <div className="grid grid-cols-3 gap-3">
-          <TypeButton active={type === "NORMAL"} onClick={() => setType("NORMAL")} icon={<User size={18} />} label="Individual" />
+          <TypeButton active={type === "NORMAL"} onClick={() => setType("NORMAL")} icon={<User size={18} />} label="Normal" />
           <TypeButton active={type === "TEAM_EVENTS"} onClick={() => setType("TEAM_EVENTS")} icon={<Users size={18} />} label="Team" />
           <TypeButton active={type === "CERTIFICATION"} onClick={() => setType("CERTIFICATION")} icon={<Award size={18} />} label="Certification" />
         </div>

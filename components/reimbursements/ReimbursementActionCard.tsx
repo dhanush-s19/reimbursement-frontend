@@ -118,7 +118,6 @@ export const ReimbursementActionCard = ({
               rows={3}
               className="w-full border border-gray-300 text-gray-900 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all placeholder:text-gray-400"
               placeholder="Provide a reason for this decision..."
-              value={reason}
               onChange={(e) => onReasonChange(e.target.value)}
             />
           </div>

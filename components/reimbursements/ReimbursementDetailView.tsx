@@ -212,7 +212,7 @@ export default function ReimbursementDetailView(props: Readonly<Props>) {
 
                 <div className="border-l border-slate-100 pl-6">
                   <p className="text-sm text-slate-500 flex items-center gap-1.5">
-                    <UserCheck size={14} className="text-emerald-600" /> Approved 
+                    <UserCheck size={14} className="text-emerald-600" /> Approved
                   </p>
                   <p className={`text-2xl font-mono font-bold ${reimbursement.approvedAmount ? "text-emerald-600" : "text-slate-300"
                     }`}>
@@ -251,19 +251,23 @@ export default function ReimbursementDetailView(props: Readonly<Props>) {
               <p className="text-sm leading-relaxed text-slate-600 bg-slate-50 p-4 rounded-lg">
                 {reimbursement.description || "No description provided."}
               </p>
-
-              {reimbursement.resubmitted && (
-                <div className="mt-3 p-3 bg-amber-50/50 rounded border border-amber-100 border-dashed">
-                  <p className="text-[10px] font-bold text-amber-800 uppercase tracking-tight mb-1">
-                    Latest Remarks:
-                  </p>
-                  <p className="text-[11px] text-slate-500 italic leading-snug">
-                    {reimbursement.reason || "No specific feedback provided."}
-                  </p>
-                </div>
-              )}
             </Card.Content>
           </Card>
+
+          {(reimbursement.reason || reimbursement.resubmitted) && (
+            <Card className="border-amber-100 bg-amber-50/30">
+              <Card.Content>
+                <div className="flex items-center gap-2 mb-4 text-slate-900">
+                  <AlertCircle size={18} className="text-slate-400 shrink-0 translate-y-[1px]" />
+                  <h3 className="text-sm font-bold tracking-tight">Reviewer Remarks</h3>
+                </div>
+
+                <p className="text-sm leading-relaxed text-slate-600 bg-slate-50 p-4 rounded-lg">
+                  {reimbursement.reason || "No specific remarks were provided for this review."}
+                </p>
+              </Card.Content>
+            </Card>
+          )}
 
           <ReimbursementActionCard {...props} />
         </div>

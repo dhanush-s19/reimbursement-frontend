@@ -46,7 +46,7 @@ export default function ClaimForm({
   const [selectedManagerId, setSelectedManagerId] = useState("");
   const [approvedCerts, setApprovedCerts] = useState<Reimbursement[]>([]);
   const [selectedCertId, setSelectedCertId] = useState("");
-  
+
   const [files, setFiles] = useState<File[]>([]);
   const [certFiles, setCertFiles] = useState<File[]>([]);
   const [error, setError] = useState<string | null>(null);

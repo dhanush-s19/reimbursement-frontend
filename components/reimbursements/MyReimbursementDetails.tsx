@@ -115,7 +115,7 @@ export default function MyReimbursementPage({ role, user }: Readonly<MyReimburse
                   <MessageSquare size={14} /> Reviewer Feedback
                 </label>
                 <div className="bg-red-50 border border-red-100 p-4 rounded-xl">
-                  <p className="text-red-900 text-sm leading-relaxed italic">
+                  <p className="text-red-900 text-sm leading-relaxed">
                     {reimbursement.reason}
                   </p>
                 </div>
